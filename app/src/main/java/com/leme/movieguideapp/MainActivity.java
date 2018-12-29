@@ -8,9 +8,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.leme.easymoviesapp.utilities.NetworkUtils;
+import com.leme.movieguideapp.models.Movie;
+import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
 
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,11 +49,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void showMovieDataView() {
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        mResponseTest.setVisibility(View.VISIBLE);
         //mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showErrorMessage() {
         //mRecyclerView.setVisibility(View.INVISIBLE);
+        mResponseTest.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
@@ -72,7 +79,11 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG, "doInBackground: " + jsonMoviesResponse);
 
                 //desserializacao
-                //List<Movie> listMoviesResponse = OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson(MainActivity.this, jsonWeatherResponse);
+                List<Movie> listMovies = OpenMovieJSONUtils.getListMoviesFromJSON(MainActivity.this, jsonMoviesResponse);
+                Log.v(TAG, "getListMoviesFromJSON: " + listMovies);
+
+                Movie movie = listMovies.get(0);
+                Log.v(TAG, "First Movie name: " + movie.getTitle());
 
                 return jsonMoviesResponse;
 
