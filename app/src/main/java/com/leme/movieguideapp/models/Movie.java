@@ -1,6 +1,9 @@
 package com.leme.movieguideapp.models;
 
-public class Movie {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Movie implements Parcelable {
 
     private int vote_count;
     private int id;
@@ -15,6 +18,22 @@ public class Movie {
     private boolean adult;
     private String overview;
     private String release_date;
+
+    private Movie(Parcel in) {
+        vote_count = in.readInt();
+        id = in.readInt();
+        video = in.readByte() != 0;
+        vote_average = in.readDouble();
+        title = in.readString();
+        popularity = in.readDouble();
+        poster_path = in.readString();
+        original_language = in.readString();
+        genre_ids = in.createIntArray();
+        backdrop_path = in.readString();
+        adult = in.readByte() != 0;
+        overview = in.readString();
+        release_date = in.readString();
+    }
 
     public int getVote_count() {
         return vote_count;
@@ -119,4 +138,39 @@ public class Movie {
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeInt(vote_count);
+        parcel.writeInt(id);
+        parcel.writeByte((byte) (video ? 1 : 0));
+        parcel.writeDouble(vote_average);
+        parcel.writeString(title);
+        parcel.writeDouble(popularity);
+        parcel.writeString(poster_path);
+        parcel.writeString(original_language);
+        parcel.writeIntArray(genre_ids);
+        parcel.writeString(backdrop_path);
+        parcel.writeByte((byte) (adult ? 1 : 0));
+        parcel.writeString(overview);
+        parcel.writeString(release_date);
+    }
+
+    static Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel parcel) {
+            return new Movie(parcel);
+        }
+
+        @Override
+        public Movie[] newArray(int i) {
+            return new Movie[i];
+        }
+    };
+
 }

@@ -2,4 +2,14 @@
     <string name="app_name">MoviesApp</string>
     <string name="error_message">An error has occurred.</string>
     <string name="show_movies_default">Show movies here!</string>
+    <string name="movie_title">Movie title</string>
+    <string name="title">title</string>
+    <string name="movie_overview">Overview</string>
+    <string name="overview">overview</string>
+    <string name="movie_vote_average">Vote Average</string>
+    <string name="vote_average">vote average</string>
+    <string name="movie_release_date">Release Date</string>
+    <string name="vote_release_date">release date</string>
+    <string name="action_popular">Popular</string>
+    <string name="action_top_rated">Top rated</string>
 </resources>

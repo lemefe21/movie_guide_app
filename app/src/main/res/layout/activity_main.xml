@@ -3,14 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_response_test"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/iv_image_no_internet"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/show_movies_default"
-        android:textSize="20sp"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        android:src="@drawable/illustrations_no_internet"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_movies"
