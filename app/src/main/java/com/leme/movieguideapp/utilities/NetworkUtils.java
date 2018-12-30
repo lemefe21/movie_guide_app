@@ -18,9 +18,10 @@ public class NetworkUtils {
     private static final String LANGUAGE = "en-US";
     private static final String PAGE = "1";
     private static final String POPULAR_MOVIES_URL = "https://api.themoviedb.org/3/movie/popular";
-    private final static String API_KEY_PARAM = "api_key";
-    private final static String LANGUAGE_PARAM = "language";
-    private final static String PAGE_PARAM = "page";
+    private static final String BASE_IMAGES_URL = "http://image.tmdb.org/t/p/w500//";
+    private static final String API_KEY_PARAM = "api_key";
+    private static final String LANGUAGE_PARAM = "language";
+    private static final String PAGE_PARAM = "page";
 
     //exemple
     //https://api.themoviedb.org/3/movie/popular?api_key=b2aceb74810ad538e3c28d72ec7e057d&language=en-US&page=1
@@ -68,4 +69,7 @@ public class NetworkUtils {
         }
     }
 
+    public static String getBaseImageURL() {
+        return NetworkUtils.BASE_IMAGES_URL;
+    }
 }

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         int numberOfColumns = 2;
         GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
         mRecyclerView.setLayoutManager(layoutManager);
-        mMovieItemAdapter = new MovieItemAdapter(this);
+        mMovieItemAdapter = new MovieItemAdapter(this,this);
         mRecyclerView.setAdapter(mMovieItemAdapter);
 
         loadMovieData();

@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.leme.movieguideapp.models.Movie;
+import com.leme.movieguideapp.utilities.NetworkUtils;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -17,12 +19,14 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
 
     private List<Movie> mMovieList;
     private final MovieItemAdapterOnClickHandler mClickHandler;
+    private Context mContext;
 
     public interface MovieItemAdapterOnClickHandler {
         void onClick(Movie movieClicked);
     }
 
-    public MovieItemAdapter(MovieItemAdapterOnClickHandler clickHandler) {
+    public MovieItemAdapter(Context context, MovieItemAdapterOnClickHandler clickHandler) {
+        mContext = context;
         mClickHandler = clickHandler;
     }
 
@@ -44,7 +48,12 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
     public void onBindViewHolder(@NonNull MovieItemAdapterViewHolder movieItemAdapterViewHolder, int position) {
 
         Movie movie = mMovieList.get(position);
+        String poster_path = movie.getPoster_path();
         movieItemAdapterViewHolder.mMovieNameTextView.setText(movie.getTitle());
+        Picasso.with(mContext)
+                .load(NetworkUtils.getBaseImageURL() + poster_path)
+                .error(R.drawable.poster_default)
+                .into(movieItemAdapterViewHolder.mMoviePosterImageView);
 
     }
 
