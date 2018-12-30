@@ -1,4 +1,4 @@
-package com.leme.easymoviesapp.utilities;
+package com.leme.movieguideapp.utilities;
 
 import android.net.Uri;
 import android.util.Log;
@@ -13,7 +13,8 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     private static final String TAG = "MoviesApp";
-    private static final String API_KEY = "b2aceb74810ad538e3c28d72ec7e057d";
+    //TODO comentar api key
+    private static final String API_KEY = "xxx";
     private static final String LANGUAGE = "en-US";
     private static final String PAGE = "1";
     private static final String POPULAR_MOVIES_URL = "https://api.themoviedb.org/3/movie/popular";
