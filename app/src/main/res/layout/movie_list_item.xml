@@ -8,6 +8,7 @@
         android:id="@+id/iv_movie_poster"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="16dp"
         android:src="@drawable/movie_image_test"/>
 
     <TextView
@@ -15,7 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Movie name"
-        android:fontFamily="monospace"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif"
         android:padding="16dp"/>
 
     <View

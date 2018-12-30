@@ -1,6 +1,8 @@
 package com.leme.movieguideapp.models;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable {
 
     private int vote_count;
     private int id;

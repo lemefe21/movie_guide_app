@@ -1,14 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/tv_detail_movie_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="22sp" />
+        android:orientation="vertical">
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/iv_detail_movie_poster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/poster_default"
+            android:padding="16dp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tv_detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif"
+            android:text="@string/movie_title"/>
+
+        <TextView
+            android:id="@+id/tv_detail_movie_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:text="@string/title"/>
+
+        <TextView
+            android:id="@+id/tv_detail_overview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif"
+            android:text="@string/movie_overview"/>
+
+        <TextView
+            android:id="@+id/tv_detail_movie_overview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:text="@string/overview"/>
+
+        <TextView
+            android:id="@+id/tv_detail_vote_average"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif"
+            android:text="@string/movie_vote_average"/>
+
+        <TextView
+            android:id="@+id/tv_detail_movie_vote_average"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:text="@string/vote_average"/>
+
+        <TextView
+            android:id="@+id/tv_detail_release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif"
+            android:text="@string/movie_release_date"/>
+
+        <TextView
+            android:id="@+id/tv_detail_movie_release_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:text="@string/vote_release_date"/>
+
+    </LinearLayout>
+
+</ScrollView>

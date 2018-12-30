@@ -17,7 +17,7 @@ public class NetworkUtils {
     private static final String API_KEY = "xxx";
     private static final String LANGUAGE = "en-US";
     private static final String PAGE = "1";
-    private static final String POPULAR_MOVIES_URL = "https://api.themoviedb.org/3/movie/popular";
+    private static final String MOVIES_URL = "https://api.themoviedb.org/3/movie/";
     private static final String BASE_IMAGES_URL = "http://image.tmdb.org/t/p/w500//";
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
@@ -28,8 +28,8 @@ public class NetworkUtils {
 
     //https://api.themoviedb.org/3/movie/popular?api_key=b2aceb74810ad538e3c28d72ec7e057d&language=en-US&page=1
 
-    public static URL buildUrl() {
-        Uri builtUri = Uri.parse(POPULAR_MOVIES_URL).buildUpon()
+    public static URL buildUrl(String searchType) {
+        Uri builtUri = Uri.parse(MOVIES_URL + searchType).buildUpon()
                 .appendQueryParameter(API_KEY_PARAM, API_KEY)
                 .appendQueryParameter(LANGUAGE_PARAM, LANGUAGE)
                 .appendQueryParameter(PAGE_PARAM, PAGE)

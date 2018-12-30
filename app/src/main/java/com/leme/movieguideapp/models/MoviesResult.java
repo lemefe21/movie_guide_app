@@ -1,8 +1,9 @@
 package com.leme.movieguideapp.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MoviesResult {
+public class MoviesResult implements Serializable {
 
     private int page;
     private int total_results;
