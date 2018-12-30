@@ -10,8 +10,6 @@ import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
-
 public class MovieDetailActivity extends AppCompatActivity {
 
     private static final String MOVIE_CLICKED = "movie_clicked";

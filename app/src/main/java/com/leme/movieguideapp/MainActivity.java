@@ -184,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
             if (jsonResponse != null) {
                 showMovieDataView();
 
-                //TODO tirar comentário - desserializacao
                 List<Movie> listMovies = OpenMovieJSONUtils.getListMoviesFromJSON(MainActivity.this, jsonResponse);
                 result = new MoviesResult(listMovies);
                 Log.v(TAG, "onPostExecute: " + listMovies);
