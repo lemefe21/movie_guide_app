@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">MovieGuideApp</string>
+    <string name="app_name">MoviesApp</string>
+    <string name="error_message">An error has occurred.</string>
+    <string name="show_movies_default">Show movies here!</string>
 </resources>
