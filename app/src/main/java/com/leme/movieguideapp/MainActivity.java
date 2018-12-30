@@ -1,8 +1,10 @@
 package com.leme.movieguideapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -35,7 +38,9 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private MovieItemAdapter mMovieItemAdapter;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
+    private ImageView mImageNoInternet;
     private MoviesResult result;
+    private boolean isConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
         mRecyclerView = findViewById(R.id.recyclerview_movies);
+        mImageNoInternet = findViewById(R.id.iv_image_no_internet);
 
         int numberOfColumns = 2;
         GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
@@ -62,13 +68,20 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     }
 
     private void showMovieDataView() {
+        mImageNoInternet.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void showErrorMessage() {
+    private void showErrorMessage(boolean isConnected) {
+        if(!isConnected){
+            mImageNoInternet.setVisibility(View.VISIBLE);
+            mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        } else {
+            mImageNoInternet.setVisibility(View.INVISIBLE);
+            mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        }
         mRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -134,18 +147,32 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
             URL moviesRequestUrl = NetworkUtils.buildUrl(searchType);
 
-            try {
+            isConnected = isOnline();
+            Log.v(TAG, "isConnected: " + isConnected);
+            if(isConnected) {
+                try {
 
-                String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
-                Log.v(TAG, "doInBackground: " + jsonMoviesResponse);
+                    String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
+                    Log.v(TAG, "doInBackground: " + jsonMoviesResponse);
 
-                return jsonMoviesResponse;
+                    return jsonMoviesResponse;
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else {
+                Log.v(TAG, "mImageNoInternet VISIBLE");
+                mImageNoInternet.setVisibility(View.VISIBLE);
                 return null;
             }
 
+        }
+
+        public boolean isOnline() {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnected();
         }
 
         @Override
@@ -167,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 mMovieItemAdapter.setMovieData(result.getResults());
 
             } else {
-                showErrorMessage();
+                showErrorMessage(isConnected);
             }
             super.onPostExecute(jsonResponse);
         }
