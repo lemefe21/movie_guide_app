@@ -2,6 +2,8 @@ package com.leme.movieguideapp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,9 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.leme.movieguideapp.models.Movie;
+import com.leme.movieguideapp.models.MoviesResult;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
 
@@ -28,10 +30,12 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private static final String MOVIE_CLICKED = "movie_clicked";
     private static final String POPULAR_MOVIES = "popular";
     private static final String TOP_RATED_MOVIES = "top_rated";
+    private static final String STATE_RESULT = "state_list_movie";
     private RecyclerView mRecyclerView;
     private MovieItemAdapter mMovieItemAdapter;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
+    private MoviesResult result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +102,22 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+
+        outState.putParcelable(STATE_RESULT, result);
+
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState);
+
+        result = savedInstanceState.getParcelable(STATE_RESULT);
+
+    }
+
     public class MovieAPITask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -139,11 +159,12 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
                 //TODO tirar comentário - desserializacao
                 List<Movie> listMovies = OpenMovieJSONUtils.getListMoviesFromJSON(MainActivity.this, jsonResponse);
+                result = new MoviesResult(listMovies);
                 Log.v(TAG, "onPostExecute: " + listMovies);
                 Movie movie = listMovies.get(0);
                 Log.v(TAG, "onPostExecute - First Movie name: " + movie.getTitle());
 
-                mMovieItemAdapter.setMovieData(listMovies);
+                mMovieItemAdapter.setMovieData(result.getResults());
 
             } else {
                 showErrorMessage();

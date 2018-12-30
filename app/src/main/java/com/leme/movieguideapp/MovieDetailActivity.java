@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class MovieDetailActivity extends AppCompatActivity {
 
     private static final String MOVIE_CLICKED = "movie_clicked";
-    private Movie movie;
+    private static Movie movie;
 
     private ImageView mPoster;
     private TextView mTitle;
@@ -36,12 +36,11 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if(intent != null && intent.hasExtra(MOVIE_CLICKED)){
-            movie = (Movie) intent.getSerializableExtra(MOVIE_CLICKED);
+            movie = intent.getParcelableExtra(MOVIE_CLICKED);
 
             bindMovieDetails(movie);
 
         }
-
 
     }
 
