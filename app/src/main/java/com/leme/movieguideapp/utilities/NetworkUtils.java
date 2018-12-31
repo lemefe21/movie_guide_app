@@ -3,6 +3,8 @@ package com.leme.movieguideapp.utilities;
 import android.net.Uri;
 import android.util.Log;
 
+import com.leme.movieguideapp.BuildConfig;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -13,8 +15,7 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     private static final String TAG = "MoviesApp";
-    //TODO comentar api key
-    private static final String API_KEY = "xxx";
+    private static final String API_KEY = BuildConfig.API_KEY_THE_MOVIE;
     private static final String LANGUAGE = "en-US";
     private static final String PAGE = "1";
     private static final String MOVIES_URL = "https://api.themoviedb.org/3/movie/";
@@ -22,11 +23,6 @@ public class NetworkUtils {
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
     private static final String PAGE_PARAM = "page";
-
-    //exemple
-    //https://api.themoviedb.org/3/movie/popular?api_key=b2aceb74810ad538e3c28d72ec7e057d&language=en-US&page=1
-
-    //https://api.themoviedb.org/3/movie/popular?api_key=b2aceb74810ad538e3c28d72ec7e057d&language=en-US&page=1
 
     public static URL buildUrl(String searchType) {
         Uri builtUri = Uri.parse(MOVIES_URL + searchType).buildUpon()

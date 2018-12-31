@@ -162,8 +162,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                     return null;
                 }
             } else {
-                Log.v(TAG, "mImageNoInternet VISIBLE");
-                mImageNoInternet.setVisibility(View.VISIBLE);
                 return null;
             }
 
@@ -181,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
             Log.v(TAG, "onPostExecute: " + jsonResponse);
 
-            if (jsonResponse != null) {
+            if (jsonResponse != null && isConnected) {
                 showMovieDataView();
 
                 List<Movie> listMovies = OpenMovieJSONUtils.getListMoviesFromJSON(MainActivity.this, jsonResponse);
@@ -197,5 +195,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
             }
             super.onPostExecute(jsonResponse);
         }
+
     }
 }
