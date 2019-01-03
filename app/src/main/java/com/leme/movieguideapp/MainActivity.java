@@ -42,16 +42,16 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private boolean isConnected;
 
     @BindView(R.id.tv_error_message_display)
-    private TextView mErrorMessageDisplay;
+    TextView mErrorMessageDisplay;
 
     @BindView(R.id.pb_loading_indicator)
-    private ProgressBar mLoadingIndicator;
+    ProgressBar mLoadingIndicator;
 
     @BindView(R.id.recyclerview_movies)
-    private RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
 
     @BindView(R.id.iv_image_no_internet)
-    private ImageView mImageNoInternet;
+    ImageView mImageNoInternet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +59,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
-        //mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
-        //mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
-        //mRecyclerView = findViewById(R.id.recyclerview_movies);
-        //mImageNoInternet = findViewById(R.id.iv_image_no_internet);
 
         int numberOfColumns = 2;
         GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
