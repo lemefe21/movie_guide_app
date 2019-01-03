@@ -27,6 +27,9 @@ import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
 import java.net.URL;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements MovieItemAdapter.MovieItemAdapterOnClickHandler {
 
     private static final String TAG = "MoviesApp";
@@ -34,23 +37,33 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private static final String POPULAR_MOVIES = "popular";
     private static final String TOP_RATED_MOVIES = "top_rated";
     private static final String STATE_RESULT = "state_list_movie";
-    private RecyclerView mRecyclerView;
     private MovieItemAdapter mMovieItemAdapter;
-    private TextView mErrorMessageDisplay;
-    private ProgressBar mLoadingIndicator;
-    private ImageView mImageNoInternet;
     private MoviesResult result;
     private boolean isConnected;
+
+    @BindView(R.id.tv_error_message_display)
+    private TextView mErrorMessageDisplay;
+
+    @BindView(R.id.pb_loading_indicator)
+    private ProgressBar mLoadingIndicator;
+
+    @BindView(R.id.recyclerview_movies)
+    private RecyclerView mRecyclerView;
+
+    @BindView(R.id.iv_image_no_internet)
+    private ImageView mImageNoInternet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
-        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
-        mRecyclerView = findViewById(R.id.recyclerview_movies);
-        mImageNoInternet = findViewById(R.id.iv_image_no_internet);
+        ButterKnife.bind(this);
+
+        //mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
+        //mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        //mRecyclerView = findViewById(R.id.recyclerview_movies);
+        //mImageNoInternet = findViewById(R.id.iv_image_no_internet);
 
         int numberOfColumns = 2;
         GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
@@ -154,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
                     String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
                     Log.v(TAG, "doInBackground: " + jsonMoviesResponse);
-
                     return jsonMoviesResponse;
 
                 } catch (Exception e) {
