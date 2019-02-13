@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,7 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.v(TAG, "onCreate");
+
         mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
         mRecyclerView = findViewById(R.id.recyclerview_movies);
@@ -66,8 +69,12 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
          */
         int loaderId = MOVIE_LOADER_ID;
 
-        int numberOfColumns = 2;
+        int posterWidth = 500;
+        int numberOfColumns = calculateBestSpanCount(posterWidth);
+        Log.v(TAG, "numberOfColumns to gridLayout: " + numberOfColumns);
         GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
+
+
         mRecyclerView.setLayoutManager(layoutManager);
         mMovieItemAdapter = new MovieItemAdapter(this,this);
         mRecyclerView.setAdapter(mMovieItemAdapter);
@@ -104,6 +111,13 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         return bundle;
     }
 
+    private int calculateBestSpanCount(int posterWidth) {
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float screenWidth = outMetrics.widthPixels;
+        return Math.round(screenWidth / posterWidth);
+    }
 
     private void showMovieDataView() {
         mImageNoInternet.setVisibility(View.INVISIBLE);
@@ -158,17 +172,51 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        Log.v(TAG, "onSaveInstanceState");
 
         outState.putParcelable(STATE_RESULT, result);
 
-        super.onSaveInstanceState(outState, outPersistentState);
+        //test to save state of grid
+        //gridState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        //outState.putParcelable(GRID_STATE_RESULT, gridState);
+
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onRestoreInstanceState(savedInstanceState, persistentState);
+        Log.v(TAG, "onRestoreInstanceState");
 
         result = savedInstanceState.getParcelable(STATE_RESULT);
+
+        //test to save state of grid
+        /*if(savedInstanceState != null) {
+            gridState = savedInstanceState.getParcelable(GRID_STATE_RESULT);
+        }*/
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.v(TAG, "onPause");
+
+        /*gridState = new Bundle();
+        Parcelable state = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        gridState.putParcelable(GRID_STATE_RESULT, state);*/
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume");
+
+        /*if(gridState != null) {
+            Log.v(TAG, "onResume - onRestoreInstanceState of grid");
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(gridState.getParcelable(GRID_STATE_RESULT));
+        }*/
 
     }
 
@@ -276,9 +324,8 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
             List<Movie> listMovies = OpenMovieJSONUtils.getListMoviesFromJSON(MainActivity.this, jsonResponse);
             result = new MoviesResult(listMovies);
-            Log.v(TAG, "onLoadFinished: " + listMovies);
             Movie movie = listMovies.get(0);
-            Log.v(TAG, "onLoadFinished - First Movie name: " + movie.getTitle());
+            Log.v(TAG, "onLoadFinished - First Movie name: " + movie.getTitle() + ", ID: " + movie.getId());
 
             mMovieItemAdapter.setMovieData(result.getResults());
 
