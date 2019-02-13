@@ -45,7 +45,65 @@ public class MovieProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return null;
+
+        Cursor cursor;
+
+        /*
+         * Here's the switch statement that, given a URI, will determine what kind of request is
+         * being made and query the database accordingly.
+         */
+        switch (uriMatcher.match(uri)) {
+
+            case CODE_MOVIE_WITH_ID: {
+
+                String lastId = uri.getLastPathSegment();
+                String[] selectionArguments = new String[]{lastId};
+
+                cursor = movieDbHelper.getReadableDatabase().query(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        projection,
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ",
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+
+                break;
+            }
+
+            /*
+             * When sUriMatcher's match method is called with a URI that looks EXACTLY like this
+             *
+             *      content://com.leme.movieguideapp/movie
+             *
+             * sUriMatcher's match method will return the code that indicates to us that we need
+             * to return all of the weather in our weather table.
+             *
+             * In this case, we want to return a cursor that contains every row of weather data
+             * in our weather table.
+             */
+            case CODE_MOVIE: {
+
+                cursor = movieDbHelper.getReadableDatabase().query(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+
+                break;
+            }
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+
+        }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
+        
     }
 
     @Nullable
@@ -69,4 +127,5 @@ public class MovieProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         return 0;
     }
+
 }
