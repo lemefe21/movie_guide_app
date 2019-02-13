@@ -9,8 +9,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import androidx.annotation.RecentlyNonNull;
-
 public class MovieProvider extends ContentProvider {
 
     public static final int CODE_MOVIE = 10;
@@ -161,18 +159,53 @@ public class MovieProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        throw new RuntimeException("We are not implementing insert in MovieGuide.");
     }
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+        throw new RuntimeException("We are not implementing insert in MovieGuide. Use bulkInsert instead");
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        int numRowsDeleted;
+
+        /*
+         * If we pass null as the selection to SQLiteDatabase#delete, our entire table will be
+         * deleted. However, if we do pass null and delete all of the rows in the table, we won't
+         * know how many rows were deleted. According to the documentation for SQLiteDatabase,
+         * passing "1" for the selection will delete all rows and return the number of rows
+         * deleted, which is what the caller of this method expects.
+         */
+        if(selection == null) {
+            selection = "1";
+        }
+
+        switch (uriMatcher.match(uri)) {
+
+            case CODE_MOVIE:
+
+                numRowsDeleted = movieDbHelper.getWritableDatabase().delete(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+
+        }
+
+        /* If we actually deleted any rows, notify that a change has occurred to this URI */
+        if(numRowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return numRowsDeleted;
     }
 
     @Override
