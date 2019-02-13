@@ -4,9 +4,12 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import androidx.annotation.RecentlyNonNull;
 
 public class MovieProvider extends ContentProvider {
 
@@ -54,7 +57,7 @@ public class MovieProvider extends ContentProvider {
          */
         switch (uriMatcher.match(uri)) {
 
-            case CODE_MOVIE_WITH_ID: {
+            case CODE_MOVIE_WITH_ID:
 
                 String lastId = uri.getLastPathSegment();
                 String[] selectionArguments = new String[]{lastId};
@@ -67,9 +70,7 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-
                 break;
-            }
 
             /*
              * When sUriMatcher's match method is called with a URI that looks EXACTLY like this
@@ -82,8 +83,7 @@ public class MovieProvider extends ContentProvider {
              * In this case, we want to return a cursor that contains every row of weather data
              * in our weather table.
              */
-            case CODE_MOVIE: {
-
+            case CODE_MOVIE:
                 cursor = movieDbHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,
@@ -92,9 +92,7 @@ public class MovieProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-
                 break;
-            }
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -103,7 +101,61 @@ public class MovieProvider extends ContentProvider {
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
-        
+
+    }
+
+    /**
+     * Handles requests to insert a set of new rows. In MovieGuide, we are only going to be
+     * inserting multiple rows of data at a time from a request. There is no use case
+     * for inserting a single row of data into our ContentProvider, and so we are only going to
+     * implement bulkInsert. In a normal ContentProvider's implementation, you will probably want
+     * to provide proper functionality for the insert method as well.
+     *	     *
+     * @param uri    The content:// URI of the insertion request.
+     * @param values An array of sets of column_name/value pairs to add to the database.
+     *               This must not be {@code null}.
+     *
+     * @return The number of values that were inserted.
+     */
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+
+        final SQLiteDatabase db = movieDbHelper.getWritableDatabase();
+
+        switch (uriMatcher.match(uri)) {
+
+            case CODE_MOVIE:
+                db.beginTransaction();
+                int rowsInserted = 0;
+
+                try {
+
+                    for(ContentValues value : values) {
+
+                        long insert = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                        if(insert != -1) {
+                            rowsInserted++;
+                        }
+
+                    }
+
+                    db.setTransactionSuccessful();
+
+                } finally {
+                    db.endTransaction();
+                }
+
+                if(rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+
+                return rowsInserted;
+
+            default:
+                return super.bulkInsert(uri, values);
+
+        }
+
     }
 
     @Nullable
