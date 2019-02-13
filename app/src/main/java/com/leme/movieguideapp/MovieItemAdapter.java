@@ -1,6 +1,7 @@
 package com.leme.movieguideapp;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,12 +18,13 @@ import java.util.List;
 
 public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.MovieItemAdapterViewHolder>{
 
-    private List<Movie> mMovieList;
+    //private List<Movie> mMovieList;
     private final MovieItemAdapterOnClickHandler mClickHandler;
     private Context mContext;
+    private Cursor cursor;
 
     public interface MovieItemAdapterOnClickHandler {
-        void onClick(Movie movieClicked);
+        void onClick(int movieId);
     }
 
     public MovieItemAdapter(Context context, MovieItemAdapterOnClickHandler clickHandler) {
@@ -34,12 +36,14 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
     @Override
     public MovieItemAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
-        Context context = viewGroup.getContext();
+        /*Context context = mContext;
         int layoutIdForListItem = R.layout.movie_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
+        boolean shouldAttachToParentImmediately = false;*/
 
-        View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.movie_list_item, viewGroup, false);
+        view.setFocusable(true);
+
         return new MovieItemAdapterViewHolder(view);
 
     }
@@ -47,9 +51,13 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
     @Override
     public void onBindViewHolder(@NonNull MovieItemAdapterViewHolder movieItemAdapterViewHolder, int position) {
 
-        Movie movie = mMovieList.get(position);
-        String poster_path = movie.getPoster_path();
-        movieItemAdapterViewHolder.mMovieNameTextView.setText(movie.getTitle());
+        cursor.moveToPosition(position);
+
+        //Movie movie = mMovieList.get(position);
+
+        movieItemAdapterViewHolder.mMovieNameTextView.setText(cursor.getString(MainActivity.INDEX_MOVIE_TITLE));
+
+        String poster_path = cursor.getString(MainActivity.INDEX_MOVIE_POSTER_PATH);
         Picasso.with(mContext)
                 .load(NetworkUtils.getBaseImageURL() + poster_path)
                 .error(R.drawable.poster_default)
@@ -59,16 +67,22 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
 
     @Override
     public int getItemCount() {
-        if(mMovieList == null) return 0;
-        return mMovieList.size();
+        if(cursor == null) return 0;
+        return cursor.getCount();
     }
 
-    public void setMovieData(List<Movie> movies) {
+    /*public void setMovieData(List<Movie> movies) {
         mMovieList = movies;
+        notifyDataSetChanged();
+    }*/
+
+    public void swapCursor(Cursor data) {
+        cursor = data;
         notifyDataSetChanged();
     }
 
     public class MovieItemAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
 
         public final TextView mMovieNameTextView;
         public final ImageView mMoviePosterImageView;
@@ -85,9 +99,11 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            Movie movie = mMovieList.get(adapterPosition);
-            mClickHandler.onClick(movie);
+            cursor.moveToPosition(adapterPosition);
+            int movieIdClicked = cursor.getInt(MainActivity.INDEX_MOVIE_ID);
+            //Movie movie = mMovieList.get(adapterPosition);
+            mClickHandler.onClick(movieIdClicked);
         }
-    }
 
+    }
 }

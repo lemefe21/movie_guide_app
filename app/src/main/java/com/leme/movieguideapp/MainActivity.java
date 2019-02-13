@@ -3,13 +3,16 @@ package com.leme.movieguideapp;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.models.MoviesResult;
 import com.leme.movieguideapp.utilities.NetworkUtils;
@@ -34,15 +38,16 @@ import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
 import java.net.URL;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MovieItemAdapter.MovieItemAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String> {
+public class MainActivity extends AppCompatActivity implements MovieItemAdapter.MovieItemAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "MoviesApp";
+    private static final String TAG = "MoviesApp_Main";
     private static final String MOVIE_CLICKED = "movie_clicked";
     private static final String POPULAR_MOVIES = "popular";
     private static final String TOP_RATED_MOVIES = "top_rated";
     private static final String STATE_RESULT = "state_list_movie";
     public static final String SEARCH_TYPE = "searchType";
     private static final int MOVIE_LOADER_ID = 1;
+    private int mPosition = RecyclerView.NO_POSITION;
     private RecyclerView mRecyclerView;
     private MovieItemAdapter mMovieItemAdapter;
     private TextView mErrorMessageDisplay;
@@ -50,6 +55,25 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private ImageView mImageNoInternet;
     private MoviesResult result;
     private boolean isConnected;
+
+    /*
+     * The columns of data that we are interested in displaying within our MainActivity's list of
+     * weather data.
+     */
+    public static final String[] MAIN_MOVIES_PROJECTION = {
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH
+    };
+
+    /*
+     * We store the indices of the values in the array of Strings above to more quickly be able to
+     * access the data from our query. If the order of the Strings above changes, these indices
+     * must be adjusted to match the order of the Strings.
+     */
+    public static final int INDEX_MOVIE_ID = 0;
+    public static final int INDEX_MOVIE_TITLE = 1;
+    public static final int INDEX_MOVIE_POSTER_PATH = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
          * to the call to initLoader below. This means that whenever the loaderManager has
          * something to notify us of, it will do so through this callback.
          */
-        LoaderManager.LoaderCallbacks<String> callbacks = MainActivity.this;
+        LoaderManager.LoaderCallbacks<Cursor> callbacks = MainActivity.this;
 
         /*
          * The second parameter of the initLoader method below is a Bundle. Optionally, you can
@@ -102,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
          * the last created loader is re-used.
          */
         getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, callbacks);
+
+        showLoading();
 
     }
 
@@ -137,9 +163,10 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     }
 
     @Override
-    public void onClick(Movie movieClicked) {
+    public void onClick(int movieIdClicked) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(MOVIE_CLICKED, movieClicked);
+        Uri uriForIdClicked = MovieContract.MovieEntry.buildWeatherUriWithId(movieIdClicked);
+        intent.setData(uriForIdClicked);
         startActivity(intent);
     }
 
@@ -223,19 +250,31 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     @SuppressLint("StaticFieldLeak")
     @NonNull
     @Override
-    public Loader<String> onCreateLoader(int i, @Nullable final Bundle loaderArgs) {
+    public Loader<Cursor> onCreateLoader(int loaderId, @Nullable final Bundle loaderArgs) {
+
+        switch (loaderId) {
+
+            case MOVIE_LOADER_ID:
+                Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
+
+                return new CursorLoader(this, movieQueryUri, MAIN_MOVIES_PROJECTION, null, null , null);
+
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + loaderId);
+
+        }
 
         /**
          * Within onCreateLoader, return a new AsyncTaskLoader that looks a lot like the existing MovieAPITask.
          */
-        return new AsyncTaskLoader<String>(this) {
+        /*return new AsyncTaskLoader<String>(this) {
 
             String moviesData = null;
 
-            /**
+            *//**
              * Cache the weather data in a member variable and deliver it in onStartLoading.
              * Subclasses of AsyncTaskLoader must implement this to take care of loading their data.
-             */
+             *//*
             @Override
             protected void onStartLoading() {
                 if(moviesData != null) {
@@ -248,10 +287,10 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 }
             }
 
-            /**
+            *//**
              * This is the method of the AsyncTaskLoader that will load the JSON data
              * @return Movie data from JSON request, null if an error occurs.
-             */
+             *//*
             @Nullable
             @Override
             public String loadInBackground() {
@@ -281,20 +320,20 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
             }
 
-            /**
+            *//**
              * Sends the result of the load to the registered listener.
-             */
+             *//*
             public boolean isOnline() {
                 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo netInfo = cm.getActiveNetworkInfo();
                 return netInfo != null && netInfo.isConnected();
             }
 
-            /**
+            *//**
              * Sends the result of the load to the registered listener.
              *
              * @param data The result of the load
-             */
+             *//*
             @Override
             public void deliverResult(@Nullable String data) {
                 Log.v(TAG, "deliverResult: " + data);
@@ -302,23 +341,35 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 super.deliverResult(data);
             }
 
-        };
+        };*/
 
     }
 
     /**
      * Called when a previously created loader has finished its load.
      * @param loader The Loader that has finished.
-     * @param jsonResponse The data generated by the Loader.
+     * @param data The data generated by the Loader.
      */
     @Override
-    public void onLoadFinished(@NonNull Loader<String> loader, String jsonResponse) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
 
         mLoadingIndicator.setVisibility(View.INVISIBLE);
 
-        Log.v(TAG, "onLoadFinished: " + jsonResponse);
+        Log.v(TAG, "onLoadFinished");
 
-        if (jsonResponse != null) {
+        mMovieItemAdapter.swapCursor(data);
+
+        if(mPosition == RecyclerView.NO_POSITION) {
+            mPosition = 0;
+        }
+
+        mRecyclerView.smoothScrollToPosition(mPosition);
+
+        if(data.getCount() != 0) {
+            showMovieDataView();
+        }
+
+        /*if (jsonResponse != null) {
 
             showMovieDataView();
 
@@ -331,16 +382,17 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
         } else {
             showErrorMessage(isConnected);
-        }
+        }*/
 
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<String> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         /*
          * We aren't using this method in our example application, but we are required to Override
          * it to implement the LoaderCallbacks<String> interface
          */
+        mMovieItemAdapter.swapCursor(null);
     }
 
     /**
@@ -348,7 +400,14 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
      * refresh of our data, you can see that there is no data showing.
      */
     private void invalidateData() {
-        mMovieItemAdapter.setMovieData(null);
+        //mMovieItemAdapter.setMovieData(null);
+    }
+
+    private void showLoading() {
+        /* Then, hide the weather data */
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        /* Finally, show the loading indicator */
+        mLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
 }
