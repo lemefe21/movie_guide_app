@@ -33,6 +33,9 @@
             android:authorities="@string/content_authority"
             android:exported="false"/>
 
+        <service android:name=".sync.MovieSyncIntentService"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
