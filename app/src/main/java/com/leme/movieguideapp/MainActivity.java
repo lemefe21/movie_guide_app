@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private ImageView mImageNoInternet;
     private MoviesResult result;
     private boolean isConnected;
-    private Bundle gridState;
+    private static Bundle gridState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         mMovieItemAdapter = new MovieItemAdapter(this,this);
         mRecyclerView.setAdapter(mMovieItemAdapter);
 
-        showLoading();
         /*
          * From MainActivity, we have implemented the LoaderCallbacks interface with the type of
          * String. (implements LoaderCallbacks<String>) The variable callback is passed
@@ -102,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
          * created and (if the activity/fragment is currently started) starts the loader. Otherwise
          * the last created loader is re-used.
          */
+        showLoading();
+
         getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, callbacks);
 
         MovieSyncUtils.initialized(this, POPULAR_MOVIES, isOnline());
@@ -248,9 +249,9 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
         if(mPosition == RecyclerView.NO_POSITION) {
             mPosition = 0;
+        } else if(gridState == null) {
+            mRecyclerView.smoothScrollToPosition(mPosition);
         }
-
-        mRecyclerView.smoothScrollToPosition(mPosition);
 
         mLoadingIndicator.setVisibility(View.INVISIBLE);
 
