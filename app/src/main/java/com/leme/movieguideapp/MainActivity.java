@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
     private static final String TAG = "MoviesApp_Main";
     private static final String MOVIE_CLICKED = "movie_clicked";
-    private static final String POPULAR_MOVIES = "popular";
-    private static final String TOP_RATED_MOVIES = "top_rated";
+    public static final String POPULAR_MOVIES = "popular";
+    public static final String TOP_RATED_MOVIES = "top_rated";
     private static final String STATE_RESULT = "state_list_movie";
     public static final String SEARCH_TYPE = "searchType";
     private static final int MOVIE_LOADER_ID = 1;

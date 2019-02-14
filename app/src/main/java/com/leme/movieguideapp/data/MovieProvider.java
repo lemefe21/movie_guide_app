@@ -130,8 +130,8 @@ public class MovieProvider extends ContentProvider {
 
                     for(ContentValues value : values) {
 
-                        long insert = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
-                        if(insert != -1) {
+                        long dataInserts = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                        if(dataInserts != -1) {
                             rowsInserted++;
                         }
 

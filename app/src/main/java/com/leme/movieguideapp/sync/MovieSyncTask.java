@@ -27,20 +27,20 @@ public class MovieSyncTask {
      * @param context Used to access utility methods and the ContentResolver
      * @param intent
      */
-    synchronized public static void syncMovie(Context context, Intent intent) {
+    synchronized public static void syncMovie(Context context, String searchType) {
 
-        String searchTypeExtra = (String) intent.getSerializableExtra(MainActivity.SEARCH_TYPE);
-        Log.v(TAG, "syncMovie searchTypeExtra: " + searchTypeExtra);
+        //String searchTypeExtra = (String) intent.getSerializableExtra(MainActivity.SEARCH_TYPE);
+        Log.v(TAG, "syncMovie searchType: " + searchType);
 
         try {
 
-            URL moviesRequestUrl = NetworkUtils.buildUrl(searchTypeExtra);
+            URL moviesRequestUrl = NetworkUtils.buildUrl(searchType);
 
             String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
 
             Log.v(TAG, "syncMovie json: " + jsonMoviesResponse);
 
-            ContentValues[] movieValues = OpenMovieJSONUtils.getListMoviesContentValuesFromJSON(jsonMoviesResponse, searchTypeExtra);
+            ContentValues[] movieValues = OpenMovieJSONUtils.getListMoviesContentValuesFromJSON(jsonMoviesResponse, searchType);
 
             if(movieValues != null && movieValues.length != 0) {
 
