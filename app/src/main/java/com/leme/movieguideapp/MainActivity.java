@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.models.MoviesResult;
+import com.leme.movieguideapp.sync.MovieSyncUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
 
@@ -125,9 +126,10 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
          * created and (if the activity/fragment is currently started) starts the loader. Otherwise
          * the last created loader is re-used.
          */
+        showLoading();
         getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, callbacks);
 
-        showLoading();
+        MovieSyncUtils.initialized(this, POPULAR_MOVIES);
 
     }
 
@@ -184,13 +186,15 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         Log.v(TAG, "onOptionsItemSelected: " + itemId);
         switch (itemId){
             case R.id.action_popular:
-                invalidateData();
-                getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), this);
+                //invalidateData();
+                //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), this);
+                MovieSyncUtils.startImmediateSync(this, POPULAR_MOVIES);
                 return true;
 
             case R.id.action_top_rated:
-                invalidateData();
-                getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), this);
+                //invalidateData();
+                //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), this);
+                MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
                 return true;
         }
 

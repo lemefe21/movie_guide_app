@@ -20,7 +20,7 @@ public class OpenMovieJSONUtils {
         return results.getResults();
     }
 
-    public static ContentValues[] getListMoviesContentValuesFromJSON(String movieJSON) {
+    public static ContentValues[] getListMoviesContentValuesFromJSON(String movieJSON, String searchType) {
 
         MoviesResult results = gson.fromJson(movieJSON, MoviesResult.class);
 
@@ -44,8 +44,7 @@ public class OpenMovieJSONUtils {
             movieValues.put(MovieEntry.COLUMN_ADULT, movie.getVote_count());
             movieValues.put(MovieEntry.COLUMN_OVERVIEW, movie.getVote_count());
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_FAVORITE, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_SEARCH_TYPE, movie.getVote_count());
+            movieValues.put(MovieEntry.COLUMN_SEARCH_TYPE, searchType);
 
             movieContentValues[i] = movieValues;
 

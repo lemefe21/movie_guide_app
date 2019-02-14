@@ -57,13 +57,16 @@ public class MovieContract {
         public static final String COLUMN_ADULT = "adult";
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_RELEASE_DATE = "release_date";
-        public static final String COLUMN_FAVORITE = "favorite";
         public static final String COLUMN_SEARCH_TYPE = "search_type";
 
         public static Uri buildWeatherUriWithId(int id) {
             return CONTENT_URI.buildUpon()
                     .appendPath(Integer.toString(id))
                     .build();
+        }
+
+        public static String getSqlSelectForSearchType(String searchType) {
+            return MovieEntry.COLUMN_SEARCH_TYPE + " = " + searchType;
         }
 
     }
