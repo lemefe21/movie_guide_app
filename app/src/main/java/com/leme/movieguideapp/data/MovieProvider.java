@@ -64,7 +64,7 @@ public class MovieProvider extends ContentProvider {
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,
                         MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ",
-                        selectionArgs,
+                        selectionArguments,
                         null,
                         null,
                         sortOrder);

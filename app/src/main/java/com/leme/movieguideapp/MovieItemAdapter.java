@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -55,9 +56,9 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
 
         //Movie movie = mMovieList.get(position);
 
-        movieItemAdapterViewHolder.mMovieNameTextView.setText(cursor.getString(MainActivity.INDEX_MOVIE_TITLE));
+        movieItemAdapterViewHolder.mMovieNameTextView.setText(cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_TITLE));
 
-        String poster_path = cursor.getString(MainActivity.INDEX_MOVIE_POSTER_PATH);
+        String poster_path = cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_POSTER_PATH);
         Picasso.with(mContext)
                 .load(NetworkUtils.getBaseImageURL() + poster_path)
                 .error(R.drawable.poster_default)
@@ -100,7 +101,7 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
             cursor.moveToPosition(adapterPosition);
-            int movieIdClicked = cursor.getInt(MainActivity.INDEX_MOVIE_ID);
+            int movieIdClicked = cursor.getInt(MovieContract.MovieEntry.INDEX_MOVIE_ID);
             //Movie movie = mMovieList.get(adapterPosition);
             mClickHandler.onClick(movieIdClicked);
         }

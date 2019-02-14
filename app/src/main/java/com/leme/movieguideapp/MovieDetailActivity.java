@@ -32,31 +32,6 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     private TextView mReleaseData;
     private Uri uri;
 
-    /*
-     * The columns of data that we are interested in displaying within our MainActivity's list of
-     * weather data.
-     */
-    public static final String[] DETAIL_MOVIES_PROJECTION = {
-            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_TITLE,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_OVERVIEW,
-            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE
-    };
-
-    /*
-     * We store the indices of the values in the array of Strings above to more quickly be able to
-     * access the data from our query. If the order of the Strings above changes, these indices
-     * must be adjusted to match the order of the Strings.
-     */
-    public static final int INDEX_MOVIE_ID = 0;
-    public static final int INDEX_MOVIE_TITLE = 1;
-    public static final int INDEX_MOVIE_POSTER_PATH = 2;
-    public static final int INDEX_MOVIE_OVERVIEW = 3;
-    public static final int INDEX_MOVIE_VOTE_AVERAGE = 4;
-    public static final int INDEX_MOVIE_RELEASE_DATE = 5;
-
     private static final int ID_DETAIL_LOADER = 3;
 
     @Override
@@ -87,17 +62,17 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
     private void bindMovieDetails(Cursor data) {
 
-        Log.v(TAG, "bindMovieDetails - cursor data:" + data.getString(INDEX_MOVIE_ID));
+        Log.v(TAG, "bindMovieDetails - cursor data:" + data.getString(MovieContract.MovieEntry.INDEX_MOVIE_ID));
 
         Picasso.with(this)
-                .load(NetworkUtils.getBaseImageURL() + data.getString(INDEX_MOVIE_POSTER_PATH))
+                .load(NetworkUtils.getBaseImageURL() + data.getString(MovieContract.MovieEntry.INDEX_MOVIE_POSTER_PATH))
                 .error(R.drawable.poster_default)
                 .into(mPoster);
 
-        mTitle.setText(data.getString(INDEX_MOVIE_TITLE));
-        mOverview.setText(data.getString(INDEX_MOVIE_OVERVIEW));
-        mVoteAverage.setText(String.valueOf(data.getString(INDEX_MOVIE_VOTE_AVERAGE)));
-        mReleaseData.setText(data.getString(INDEX_MOVIE_RELEASE_DATE));
+        mTitle.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_TITLE));
+        mOverview.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_OVERVIEW));
+        mVoteAverage.setText(String.valueOf(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_VOTE_AVERAGE)));
+        mReleaseData.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_RELEASE_DATE));
 
     }
 
@@ -110,7 +85,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
             case ID_DETAIL_LOADER:
 
                 return new CursorLoader(this,
-                        uri, DETAIL_MOVIES_PROJECTION, null, null, null);
+                        uri, MovieContract.MovieEntry.MOVIES_PROJECTION, null, null, null);
 
             default:
                 throw new RuntimeException("Loader Not Implemented: " + loaderId);

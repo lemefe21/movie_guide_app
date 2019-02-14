@@ -1,5 +1,6 @@
 package com.leme.movieguideapp.sync;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -13,6 +14,7 @@ public class MovieFirebaseJobService extends JobService {
     private static final String TAG = "MoviesApp_JobService";
     private AsyncTask<Void, Void, Void> fetchMovieTask;
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public boolean onStartJob(final JobParameters jobParameters) {
 
@@ -21,7 +23,7 @@ public class MovieFirebaseJobService extends JobService {
             protected Void doInBackground(Void... voids) {
 
                 String searchType = MainActivity.POPULAR_MOVIES;
-                Log.v(TAG, "syncMovie searchType: " + searchType);
+                Log.v(TAG, "MovieFirebaseJobService doInBackground: " + searchType);
 
                 Context context = getApplicationContext();
                 MovieSyncTask.syncMovie(context, searchType);
@@ -31,16 +33,19 @@ public class MovieFirebaseJobService extends JobService {
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                Log.v(TAG, "MovieFirebaseJobService onPostExecute");
                 jobFinished(jobParameters, false);
             }
-        };
 
-        return false;
+        }.execute();
+
+        return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
 
+        Log.v(TAG, "MovieFirebaseJobService onStopJob");
         if(fetchMovieTask != null) {
             fetchMovieTask.cancel(true);
         }

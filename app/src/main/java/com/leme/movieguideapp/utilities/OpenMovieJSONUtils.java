@@ -30,21 +30,22 @@ public class OpenMovieJSONUtils {
         for (int i = 0; i < movies.size(); i++) {
 
             Movie movie  = movies.get(i);
+            movie.setSearchType(searchType);
 
             ContentValues movieValues = new ContentValues();
             movieValues.put(MovieEntry.COLUMN_VOTE_COUNT, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_MOVIE_ID, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_VIDEO, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_TITLE, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_POPULARITY, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_POSTER_PATH, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_ORIGINAL_LANGUAGE, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_BACKDROP_PATH, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_ADULT, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_OVERVIEW, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movie.getVote_count());
-            movieValues.put(MovieEntry.COLUMN_SEARCH_TYPE, searchType);
+            movieValues.put(MovieEntry.COLUMN_MOVIE_ID, movie.getId());
+            movieValues.put(MovieEntry.COLUMN_VIDEO, movie.isVideo());
+            movieValues.put(MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVote_average());
+            movieValues.put(MovieEntry.COLUMN_TITLE, movie.getTitle());
+            movieValues.put(MovieEntry.COLUMN_POPULARITY, movie.getPopularity());
+            movieValues.put(MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());
+            movieValues.put(MovieEntry.COLUMN_ORIGINAL_LANGUAGE, movie.getOriginal_language());
+            movieValues.put(MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdrop_path());
+            movieValues.put(MovieEntry.COLUMN_ADULT, movie.isAdult());
+            movieValues.put(MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+            movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
+            movieValues.put(MovieEntry.COLUMN_SEARCH_TYPE, movie.getSearchType());
 
             movieContentValues[i] = movieValues;
 

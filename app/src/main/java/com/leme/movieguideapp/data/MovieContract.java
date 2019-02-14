@@ -45,19 +45,58 @@ public class MovieContract {
 
         public static final String TABLE_NAME = "movie";
 
-        public static final String COLUMN_VOTE_COUNT = "vote_count";
-        public static final String COLUMN_MOVIE_ID = "movie_id";
-        public static final String COLUMN_VIDEO = "video";
-        public static final String COLUMN_VOTE_AVERAGE = "vote_average";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_POPULARITY = "popularity";
-        public static final String COLUMN_POSTER_PATH = "poster_path";
+        public static final String COLUMN_VOTE_COUNT        = "vote_count";
+        public static final String COLUMN_MOVIE_ID          = "movie_id";
+        public static final String COLUMN_VIDEO             = "video";
+        public static final String COLUMN_VOTE_AVERAGE      = "vote_average";
+        public static final String COLUMN_TITLE             = "title";
+        public static final String COLUMN_POPULARITY        = "popularity";
+        public static final String COLUMN_POSTER_PATH       = "poster_path";
         public static final String COLUMN_ORIGINAL_LANGUAGE = "original_language";
-        public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
-        public static final String COLUMN_ADULT = "adult";
-        public static final String COLUMN_OVERVIEW = "overview";
-        public static final String COLUMN_RELEASE_DATE = "release_date";
-        public static final String COLUMN_SEARCH_TYPE = "search_type";
+        public static final String COLUMN_BACKDROP_PATH     = "backdrop_path";
+        public static final String COLUMN_ADULT             = "adult";
+        public static final String COLUMN_OVERVIEW          = "overview";
+        public static final String COLUMN_RELEASE_DATE      = "release_date";
+        public static final String COLUMN_SEARCH_TYPE       = "search_type";
+
+        /*
+         * The columns of data that we are interested in displaying within our MainActivity's list of
+         * weather data.
+         */
+        public static final String[] MOVIES_PROJECTION = {
+                MovieContract.MovieEntry.COLUMN_VOTE_COUNT,
+                MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+                MovieContract.MovieEntry.COLUMN_VIDEO,
+                MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+                MovieContract.MovieEntry.COLUMN_TITLE,
+                MovieContract.MovieEntry.COLUMN_POPULARITY,
+                MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+                MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE,
+                MovieContract.MovieEntry.COLUMN_BACKDROP_PATH,
+                MovieContract.MovieEntry.COLUMN_ADULT,
+                MovieContract.MovieEntry.COLUMN_OVERVIEW,
+                MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+                MovieContract.MovieEntry.COLUMN_SEARCH_TYPE
+        };
+
+        /*
+         * We store the indices of the values in the array of Strings above to more quickly be able to
+         * access the data from our query. If the order of the Strings above changes, these indices
+         * must be adjusted to match the order of the Strings.
+         */
+        public static final int INDEX_MOVIE_VOTE_COUNT = 0;
+        public static final int INDEX_MOVIE_ID = 1;
+        public static final int INDEX_MOVIE_VIDEO = 2;
+        public static final int INDEX_MOVIE_VOTE_AVERAGE = 3;
+        public static final int INDEX_MOVIE_TITLE = 4;
+        public static final int INDEX_MOVIE_POPULARITY = 5;
+        public static final int INDEX_MOVIE_POSTER_PATH = 6;
+        public static final int INDEX_MOVIE_ORIGINAL_LANGUAGE = 7;
+        public static final int INDEX_MOVIE_BACKDROP_PATH = 8;
+        public static final int INDEX_MOVIE_ADULT = 9;
+        public static final int INDEX_MOVIE_OVERVIEW = 10;
+        public static final int INDEX_MOVIE_RELEASE_DATE = 11;
+        public static final int INDEX_MOVIE_SEARCH_TYPE = 12;
 
         public static Uri buildWeatherUriWithId(int id) {
             return CONTENT_URI.buildUpon()
@@ -66,7 +105,7 @@ public class MovieContract {
         }
 
         public static String getSqlSelectForSearchType(String searchType) {
-            return MovieEntry.COLUMN_SEARCH_TYPE + " = " + searchType;
+            return MovieEntry.COLUMN_SEARCH_TYPE + " = '" + searchType + "'";
         }
 
     }

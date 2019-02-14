@@ -25,7 +25,7 @@ public class MovieSyncTask {
      * AND they haven't disabled notifications in the preferences screen.
      *
      * @param context Used to access utility methods and the ContentResolver
-     * @param intent
+     * @param searchType
      */
     synchronized public static void syncMovie(Context context, String searchType) {
 

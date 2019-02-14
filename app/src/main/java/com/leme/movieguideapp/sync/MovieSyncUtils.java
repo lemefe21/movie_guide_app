@@ -28,13 +28,16 @@ public class MovieSyncUtils {
      * Interval at which to sync with the weather. Use TimeUnit for convenience, rather than
      * writing out a bunch of multiplication ourselves and risk making a silly mistake.
      */
-    //private static final int SYNC_INTERVAL_HOURS = 4;
-    //private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
-    //private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 4;
+    private static final int SYNC_INTERVAL_HOURS = 4;
+    private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
+    private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 4;
 
+    /*
+     * for test
     private static final int SYNC_INTERVAL_MINUTES = 2;
     private static final int SYNC_INTERVAL_SECONDS = (int) (TimeUnit.MINUTES.toSeconds(SYNC_INTERVAL_MINUTES));
     private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS;
+    */
 
     private static final String MOVIE_SYNC_TAG = "movie-sync";
 
@@ -45,7 +48,7 @@ public class MovieSyncUtils {
      */
     static void scheduleFirebaseJobDispatcherSync(final Context context) {
 
-        Log.v(TAG, "scheduleFirebaseJobDispatcherSync seconds: " + SYNC_INTERVAL_SECONDS);
+        Log.v(TAG, "scheduleFirebaseJobDispatcherSync - " + SYNC_INTERVAL_SECONDS + " seconds");
 
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
@@ -56,7 +59,7 @@ public class MovieSyncUtils {
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .setLifetime(Lifetime.FOREVER)
                 .setRecurring(true)
-                .setTrigger(Trigger.executionWindow(SYNC_INTERVAL_SECONDS, SYNC_INTERVAL_SECONDS + SYNC_INTERVAL_SECONDS))
+                .setTrigger(Trigger.executionWindow(SYNC_INTERVAL_SECONDS, SYNC_INTERVAL_SECONDS + SYNC_FLEXTIME_SECONDS))
                 .setReplaceCurrent(true)
                 .build();
 
@@ -70,11 +73,14 @@ public class MovieSyncUtils {
      *
      * @param context Context that will be passed to other methods and used to access the
      *                ContentResolver
+     * @param online
      */
-    synchronized public static void initialized(final Context context, final String searchType) {
+    synchronized public static void initialized(final Context context, final String searchType, boolean online) {
 
         if(initialized) return;
-        initialized = true;
+        if(online) {
+            initialized = true;
+        }
 
         scheduleFirebaseJobDispatcherSync(context);
 
@@ -94,14 +100,14 @@ public class MovieSyncUtils {
                  * to determine what weather details need to be displayed.
                  */
 
-                String[] projectionColumns = {MovieContract.MovieEntry._ID};
+                //String[] projectionColumns = {MovieContract.MovieEntry._ID};
                 String sqlSelectForSearchType = MovieContract.MovieEntry.getSqlSelectForSearchType(searchType);
                 Log.v(TAG, "doInBackground sqlSelectForSearchType: " + sqlSelectForSearchType);
 
                 /* Here, we perform the query to check to see if we have any weather data */
                 Cursor cursor = context.getContentResolver().query(
                         movieQueryUri,
-                        projectionColumns,
+                        MovieContract.MovieEntry.MOVIES_PROJECTION,
                         sqlSelectForSearchType,
                         null,
                         null);

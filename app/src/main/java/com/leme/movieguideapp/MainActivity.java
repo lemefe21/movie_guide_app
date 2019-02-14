@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,10 +43,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements MovieItemAdapter.MovieItemAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MoviesApp_Main";
-    private static final String MOVIE_CLICKED = "movie_clicked";
     public static final String POPULAR_MOVIES = "popular";
     public static final String TOP_RATED_MOVIES = "top_rated";
     private static final String STATE_RESULT = "state_list_movie";
+    private static final String GRID_STATE_RESULT = "grid_state";
     public static final String SEARCH_TYPE = "searchType";
     private static final int MOVIE_LOADER_ID = 1;
     private int mPosition = RecyclerView.NO_POSITION;
@@ -56,25 +57,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private ImageView mImageNoInternet;
     private MoviesResult result;
     private boolean isConnected;
-
-    /*
-     * The columns of data that we are interested in displaying within our MainActivity's list of
-     * weather data.
-     */
-    public static final String[] MAIN_MOVIES_PROJECTION = {
-            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_TITLE,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH
-    };
-
-    /*
-     * We store the indices of the values in the array of Strings above to more quickly be able to
-     * access the data from our query. If the order of the Strings above changes, these indices
-     * must be adjusted to match the order of the Strings.
-     */
-    public static final int INDEX_MOVIE_ID = 0;
-    public static final int INDEX_MOVIE_TITLE = 1;
-    public static final int INDEX_MOVIE_POSTER_PATH = 2;
+    private Bundle gridState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +71,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         mRecyclerView = findViewById(R.id.recyclerview_movies);
         mImageNoInternet = findViewById(R.id.iv_image_no_internet);
 
-        /*
-         * This ID will uniquely identify the Loader. We can use it, for example, to get a handle
-         * on our Loader at a later point in time through the support LoaderManager.
-         */
-        int loaderId = MOVIE_LOADER_ID;
-
         int posterWidth = 500;
         int numberOfColumns = calculateBestSpanCount(posterWidth);
         Log.v(TAG, "numberOfColumns to gridLayout: " + numberOfColumns);
@@ -104,8 +81,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         mMovieItemAdapter = new MovieItemAdapter(this,this);
         mRecyclerView.setAdapter(mMovieItemAdapter);
 
-        showMovieDataView();
-
+        showLoading();
         /*
          * From MainActivity, we have implemented the LoaderCallbacks interface with the type of
          * String. (implements LoaderCallbacks<String>) The variable callback is passed
@@ -126,10 +102,9 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
          * created and (if the activity/fragment is currently started) starts the loader. Otherwise
          * the last created loader is re-used.
          */
-        showLoading();
         getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, callbacks);
 
-        MovieSyncUtils.initialized(this, POPULAR_MOVIES);
+        MovieSyncUtils.initialized(this, POPULAR_MOVIES, isOnline());
 
     }
 
@@ -188,12 +163,14 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
             case R.id.action_popular:
                 //invalidateData();
                 //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), this);
+                showLoading();
                 MovieSyncUtils.startImmediateSync(this, POPULAR_MOVIES);
                 return true;
 
             case R.id.action_top_rated:
                 //invalidateData();
                 //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), this);
+                showLoading();
                 MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
                 return true;
         }
@@ -205,27 +182,14 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         Log.v(TAG, "onSaveInstanceState");
-
         outState.putParcelable(STATE_RESULT, result);
-
-        //test to save state of grid
-        //gridState = mRecyclerView.getLayoutManager().onSaveInstanceState();
-        //outState.putParcelable(GRID_STATE_RESULT, gridState);
-
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onRestoreInstanceState(savedInstanceState, persistentState);
         Log.v(TAG, "onRestoreInstanceState");
-
         result = savedInstanceState.getParcelable(STATE_RESULT);
-
-        //test to save state of grid
-        /*if(savedInstanceState != null) {
-            gridState = savedInstanceState.getParcelable(GRID_STATE_RESULT);
-        }*/
-
     }
 
     @Override
@@ -233,9 +197,9 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         super.onPause();
         Log.v(TAG, "onPause");
 
-        /*gridState = new Bundle();
+        gridState = new Bundle();
         Parcelable state = mRecyclerView.getLayoutManager().onSaveInstanceState();
-        gridState.putParcelable(GRID_STATE_RESULT, state);*/
+        gridState.putParcelable(GRID_STATE_RESULT, state);
 
     }
 
@@ -244,10 +208,10 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         super.onResume();
         Log.v(TAG, "onResume");
 
-        /*if(gridState != null) {
+        if(gridState != null) {
             Log.v(TAG, "onResume - onRestoreInstanceState of grid");
             mRecyclerView.getLayoutManager().onRestoreInstanceState(gridState.getParcelable(GRID_STATE_RESULT));
-        }*/
+        }
 
     }
 
@@ -261,91 +225,12 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
             case MOVIE_LOADER_ID:
                 Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
 
-                return new CursorLoader(this, movieQueryUri, MAIN_MOVIES_PROJECTION, null, null , null);
+                return new CursorLoader(this, movieQueryUri, MovieContract.MovieEntry.MOVIES_PROJECTION, null, null , null);
 
             default:
                 throw new RuntimeException("Loader Not Implemented: " + loaderId);
 
         }
-
-        /**
-         * Within onCreateLoader, return a new AsyncTaskLoader that looks a lot like the existing MovieAPITask.
-         */
-        /*return new AsyncTaskLoader<String>(this) {
-
-            String moviesData = null;
-
-            *//**
-             * Cache the weather data in a member variable and deliver it in onStartLoading.
-             * Subclasses of AsyncTaskLoader must implement this to take care of loading their data.
-             *//*
-            @Override
-            protected void onStartLoading() {
-                if(moviesData != null) {
-                    Log.v(TAG, "onStartLoading: moviesData is not null");
-                    deliverResult(moviesData);
-                } else {
-                    Log.v(TAG, "onStartLoading: moviesData is null >> forceLoad");
-                    mLoadingIndicator.setVisibility(View.VISIBLE);
-                    forceLoad();
-                }
-            }
-
-            *//**
-             * This is the method of the AsyncTaskLoader that will load the JSON data
-             * @return Movie data from JSON request, null if an error occurs.
-             *//*
-            @Nullable
-            @Override
-            public String loadInBackground() {
-
-                String searchType = loaderArgs.getString(SEARCH_TYPE);
-                Log.v(TAG, "doInBackground - searchType: " + searchType);
-
-                URL moviesRequestUrl = NetworkUtils.buildUrl(searchType);
-
-                isConnected = isOnline();
-                Log.v(TAG, "isConnected: " + isConnected);
-                if(isOnline()) {
-                    try {
-
-                        String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
-                        Log.v(TAG, "doInBackground: " + jsonMoviesResponse);
-
-                        return jsonMoviesResponse;
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-
-            }
-
-            *//**
-             * Sends the result of the load to the registered listener.
-             *//*
-            public boolean isOnline() {
-                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo netInfo = cm.getActiveNetworkInfo();
-                return netInfo != null && netInfo.isConnected();
-            }
-
-            *//**
-             * Sends the result of the load to the registered listener.
-             *
-             * @param data The result of the load
-             *//*
-            @Override
-            public void deliverResult(@Nullable String data) {
-                Log.v(TAG, "deliverResult: " + data);
-                moviesData = data;
-                super.deliverResult(data);
-            }
-
-        };*/
 
     }
 
@@ -357,8 +242,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
 
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
-
         Log.v(TAG, "onLoadFinished");
 
         mMovieItemAdapter.swapCursor(data);
@@ -369,24 +252,16 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
         mRecyclerView.smoothScrollToPosition(mPosition);
 
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+
+        isConnected = isOnline();
+        if(data.getCount() == 0 && !isOnline()) {
+            showErrorMessage(isConnected);
+        }
+
         if(data.getCount() != 0) {
             showMovieDataView();
         }
-
-        /*if (jsonResponse != null) {
-
-            showMovieDataView();
-
-            List<Movie> listMovies = OpenMovieJSONUtils.getListMoviesFromJSON(MainActivity.this, jsonResponse);
-            result = new MoviesResult(listMovies);
-            Movie movie = listMovies.get(0);
-            Log.v(TAG, "onLoadFinished - First Movie name: " + movie.getTitle() + ", ID: " + movie.getId());
-
-            mMovieItemAdapter.setMovieData(result.getResults());
-
-        } else {
-            showErrorMessage(isConnected);
-        }*/
 
     }
 
@@ -399,19 +274,17 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         mMovieItemAdapter.swapCursor(null);
     }
 
-    /**
-     * This method is used when we are resetting data or change search type, so that at one point in time during a
-     * refresh of our data, you can see that there is no data showing.
-     */
-    private void invalidateData() {
-        //mMovieItemAdapter.setMovieData(null);
-    }
-
     private void showLoading() {
         /* Then, hide the weather data */
         mRecyclerView.setVisibility(View.INVISIBLE);
         /* Finally, show the loading indicator */
         mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnected();
     }
 
 }
