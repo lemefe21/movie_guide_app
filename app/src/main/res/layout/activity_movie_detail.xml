@@ -18,6 +18,15 @@
             android:layout_gravity="center"/>
 
         <TextView
+            android:id="@+id/btn_favorite_movie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_padding_16dp"
+            android:background="@drawable/item_favorite_selector"
+            android:textColor="@color/white"
+            android:text="Favorite: No"/>
+
+        <TextView
             android:id="@+id/tv_detail_title"
             style="@style/DetailMovieTitles"
             android:text="@string/movie_title"/>

@@ -45,6 +45,7 @@ public class OpenMovieJSONUtils {
             movieValues.put(MovieEntry.COLUMN_ADULT, movie.isAdult());
             movieValues.put(MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
+            movieValues.put(MovieEntry.COLUMN_FAVORITE, movie.isFavorite());
             movieValues.put(MovieEntry.COLUMN_SEARCH_TYPE, movie.getSearchType());
 
             movieContentValues[i] = movieValues;

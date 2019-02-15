@@ -210,7 +210,34 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        int numRowsUpdated = 0;
+
+        switch (uriMatcher.match(uri)) {
+
+            case CODE_MOVIE_WITH_ID:
+
+                String lastId = uri.getLastPathSegment();
+                String[] selectionArguments = new String[]{lastId};
+
+                numRowsUpdated = movieDbHelper.getWritableDatabase().update(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        values,
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ",
+                        selectionArguments);
+
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+
+        }
+
+        if(numRowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return numRowsUpdated;
     }
 
 }

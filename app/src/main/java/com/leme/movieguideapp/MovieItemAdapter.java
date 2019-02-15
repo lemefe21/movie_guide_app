@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.models.Movie;
+import com.leme.movieguideapp.utilities.MovieUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
@@ -64,6 +65,12 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
                 .error(R.drawable.poster_default)
                 .into(movieItemAdapterViewHolder.mMoviePosterImageView);
 
+        if(MovieUtils.checkIfMovieIsFavorite(cursor)) {
+            movieItemAdapterViewHolder.mMovieFavorited.setVisibility(View.VISIBLE);
+        } else {
+            movieItemAdapterViewHolder.mMovieFavorited.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Override
@@ -87,12 +94,14 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
 
         public final TextView mMovieNameTextView;
         public final ImageView mMoviePosterImageView;
+        public final ImageView mMovieFavorited;
 
         public MovieItemAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mMovieNameTextView = itemView.findViewById(R.id.tv_movie_name);
             mMoviePosterImageView = itemView.findViewById(R.id.iv_movie_poster);
+            mMovieFavorited = itemView.findViewById(R.id.iv_movie_favorited);
             itemView.setOnClickListener(this);
 
         }

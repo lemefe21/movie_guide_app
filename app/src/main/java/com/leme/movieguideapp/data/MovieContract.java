@@ -57,6 +57,7 @@ public class MovieContract {
         public static final String COLUMN_ADULT             = "adult";
         public static final String COLUMN_OVERVIEW          = "overview";
         public static final String COLUMN_RELEASE_DATE      = "release_date";
+        public static final String COLUMN_FAVORITE          = "favorite";
         public static final String COLUMN_SEARCH_TYPE       = "search_type";
 
         /*
@@ -76,6 +77,7 @@ public class MovieContract {
                 MovieContract.MovieEntry.COLUMN_ADULT,
                 MovieContract.MovieEntry.COLUMN_OVERVIEW,
                 MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+                MovieContract.MovieEntry.COLUMN_FAVORITE,
                 MovieContract.MovieEntry.COLUMN_SEARCH_TYPE
         };
 
@@ -96,9 +98,10 @@ public class MovieContract {
         public static final int INDEX_MOVIE_ADULT = 9;
         public static final int INDEX_MOVIE_OVERVIEW = 10;
         public static final int INDEX_MOVIE_RELEASE_DATE = 11;
-        public static final int INDEX_MOVIE_SEARCH_TYPE = 12;
+        public static final int INDEX_MOVIE_FAVORITE = 12;
+        public static final int INDEX_MOVIE_SEARCH_TYPE = 13;
 
-        public static Uri buildWeatherUriWithId(int id) {
+        public static Uri buildMovieUriWithId(int id) {
             return CONTENT_URI.buildUpon()
                     .appendPath(Integer.toString(id))
                     .build();

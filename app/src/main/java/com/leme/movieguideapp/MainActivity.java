@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     @Override
     public void onClick(int movieIdClicked) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        Uri uriForIdClicked = MovieContract.MovieEntry.buildWeatherUriWithId(movieIdClicked);
+        Uri uriForIdClicked = MovieContract.MovieEntry.buildMovieUriWithId(movieIdClicked);
         intent.setData(uriForIdClicked);
         startActivity(intent);
     }

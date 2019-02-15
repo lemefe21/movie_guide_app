@@ -1,6 +1,7 @@
 package com.leme.movieguideapp;
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,11 +12,13 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.models.Movie;
+import com.leme.movieguideapp.utilities.MovieUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
@@ -30,9 +33,16 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     private TextView mOverview;
     private TextView mVoteAverage;
     private TextView mReleaseData;
+    private TextView btnFavorite;
+    private boolean isFavorited;
     private Uri uri;
+    private Cursor cursor;
 
     private static final int ID_DETAIL_LOADER = 3;
+    //private static final int ID_FAVORITE_LOADER = 4;
+    //private static final int ID_VIDEOS_LOADER = 5;
+    //private static final int ID_REVIEWS_LOADER = 6;
+    //private static final String FAVORITE_VALUE = "favorite";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,20 +54,45 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         mOverview = findViewById(R.id.tv_detail_movie_overview);
         mVoteAverage = findViewById(R.id.tv_detail_movie_vote_average);
         mReleaseData = findViewById(R.id.tv_detail_movie_release_date);
-
-        /*Intent intent = getIntent();
-        if(intent != null && intent.hasExtra(MOVIE_CLICKED)){
-            movie = intent.getParcelableExtra(MOVIE_CLICKED);
-
-            bindMovieDetails(movie);
-
-        }*/
+        btnFavorite = findViewById(R.id.btn_favorite_movie);
 
         uri = getIntent().getData();
         if (uri == null) throw new NullPointerException("URI for DetailActivity cannot be null");
 
         getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
 
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Log.v(TAG, "onClick - cursor data:" + cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_FAVORITE));
+                Log.v(TAG, "Favorited this movie: " + cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_FAVORITE));
+
+                ContentValues movieValues = new ContentValues();
+                movieValues.put(MovieContract.MovieEntry.COLUMN_FAVORITE, (!isFavorited ? 1 : 0));
+
+                int countRowsUpdated = getContentResolver().update(uri,
+                        movieValues,
+                        null,
+                        null);
+
+                if(countRowsUpdated > 0) {
+                    Log.v(TAG, "Favorite movie: " + countRowsUpdated + " rows update");
+                } else {
+                    //throw new IllegalStateException ("No row updated...");
+                }
+
+            }
+        });
+
+    }
+
+    private void setFavoriteTextView() {
+        if(isFavorited) {
+            btnFavorite.setText("Favorite: Yes");
+        } else {
+            btnFavorite.setText("Favorite: No");
+        }
     }
 
     private void bindMovieDetails(Cursor data) {
@@ -71,15 +106,20 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
         mTitle.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_TITLE));
         mOverview.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_OVERVIEW));
-        mVoteAverage.setText(String.valueOf(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_VOTE_AVERAGE)));
+        mVoteAverage.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_VOTE_AVERAGE));
         mReleaseData.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_RELEASE_DATE));
+        isFavorited = MovieUtils.checkIfMovieIsFavorite(data);
+        setFavoriteTextView();
+        cursor = data;
 
     }
 
+    @SuppressLint("StaticFieldLeak")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int loaderId, @Nullable Bundle bundle) {
 
+        Log.v(TAG, "onCreateLoader - loader ID:" + loaderId);
         switch (loaderId) {
 
             case ID_DETAIL_LOADER:
@@ -96,6 +136,8 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+
+        Log.v(TAG, "onLoadFinished - loader ID:" + loader.getId());
 
         /*
          * Before we bind the data to the UI that will display that data, we need to check the
