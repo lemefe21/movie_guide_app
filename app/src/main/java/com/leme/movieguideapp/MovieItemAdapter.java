@@ -55,7 +55,7 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
 
         cursor.moveToPosition(position);
 
-        //Movie movie = mMovieList.get(position);
+        String title = cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_TITLE);
 
         movieItemAdapterViewHolder.mMovieNameTextView.setText(cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_TITLE));
 
@@ -76,6 +76,7 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
     @Override
     public int getItemCount() {
         if(cursor == null) return 0;
+        int count = cursor.getCount();
         return cursor.getCount();
     }
 

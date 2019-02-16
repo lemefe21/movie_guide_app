@@ -3,15 +3,13 @@ package com.leme.movieguideapp.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
-import com.leme.movieguideapp.MainActivity;
 import com.leme.movieguideapp.data.MovieContract;
+import com.leme.movieguideapp.utilities.MovieUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
 
-import java.io.Serializable;
 import java.net.URL;
 
 public class MovieSyncTask {
@@ -47,8 +45,16 @@ public class MovieSyncTask {
                 /* Get a handle on the ContentResolver to delete and insert data */
                 ContentResolver movieContentResolver = context.getContentResolver();
 
+                movieValues = MovieUtils.updateValuesWithFavoritedMovies(movieContentResolver, movieValues, searchType);
+
+                String[] selectionArguments = new String[]{searchType};
+
                 //delete the old data and insert the new
+                //movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_SEARCH_TYPE + " = ? ", selectionArguments);
+
                 movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
+
+                int v = movieValues.length;
 
                 //Insert our new movie data into MovieGuide's ContentProvider
                 movieContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, movieValues);

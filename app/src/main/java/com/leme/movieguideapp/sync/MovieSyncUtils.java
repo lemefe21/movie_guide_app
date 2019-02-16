@@ -135,10 +135,4 @@ public class MovieSyncUtils {
 
     }
 
-    public static void startUpdateMovie(final Context context, Uri uri, boolean favorite) {
-
-        Log.v(TAG, "startUpdateMovie: " + uri);
-
-    }
-
 }

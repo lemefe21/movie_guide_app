@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 //invalidateData();
                 //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), this);
                 showLoading();
+                onLoaderReset(null);
                 MovieSyncUtils.startImmediateSync(this, POPULAR_MOVIES);
                 return true;
 
@@ -172,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 //invalidateData();
                 //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), this);
                 showLoading();
+                onLoaderReset(null);
                 MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
                 return true;
         }
@@ -226,7 +228,9 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
             case MOVIE_LOADER_ID:
                 Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
 
-                return new CursorLoader(this, movieQueryUri, MovieContract.MovieEntry.MOVIES_PROJECTION, null, null , null);
+                String[] selectionArguments = new String[]{(String) loaderArgs.get(SEARCH_TYPE)};
+
+                return new CursorLoader(this, movieQueryUri, MovieContract.MovieEntry.MOVIES_PROJECTION, MovieContract.MovieEntry.COLUMN_SEARCH_TYPE + " = ? ", selectionArguments, null);
 
             default:
                 throw new RuntimeException("Loader Not Implemented: " + loaderId);
