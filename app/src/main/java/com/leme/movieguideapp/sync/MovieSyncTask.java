@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.leme.movieguideapp.MainActivity;
 import com.leme.movieguideapp.data.MovieContract;
+import com.leme.movieguideapp.utilities.MovieUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
 
@@ -46,6 +47,8 @@ public class MovieSyncTask {
 
                 /* Get a handle on the ContentResolver to delete and insert data */
                 ContentResolver movieContentResolver = context.getContentResolver();
+
+                movieValues = MovieUtils.updateValuesWithFavoritedMovies(movieContentResolver, movieValues, searchType);
 
                 //delete the old data and insert the new
                 movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);

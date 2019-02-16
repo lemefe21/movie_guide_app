@@ -111,6 +111,15 @@ public class MovieContract {
             return MovieEntry.COLUMN_SEARCH_TYPE + " = '" + searchType + "'";
         }
 
+        public static String getSqlSelectForFavoritedAndTypeMovies(String searchType) {
+            return MovieEntry.COLUMN_FAVORITE + " = '" + 1 + "' AND " +
+                    MovieEntry.COLUMN_SEARCH_TYPE + " = '" + searchType + "'";
+        }
+
+        public static String getSqlSelectForFavoritedMovies() {
+            return MovieEntry.COLUMN_FAVORITE + " = '" + 1 + "'";
+        }
+
     }
 
 }
