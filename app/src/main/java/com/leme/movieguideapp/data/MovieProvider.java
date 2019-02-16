@@ -82,6 +82,11 @@ public class MovieProvider extends ContentProvider {
              * in our weather table.
              */
             case CODE_MOVIE:
+
+                String[] a = projection;
+                String b = selection;
+                String[] c = selectionArgs;
+
                 cursor = movieDbHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,

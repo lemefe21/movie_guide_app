@@ -12,7 +12,6 @@ import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -31,14 +30,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.leme.movieguideapp.data.MovieContract;
-import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.models.MoviesResult;
 import com.leme.movieguideapp.sync.MovieSyncUtils;
-import com.leme.movieguideapp.utilities.NetworkUtils;
-import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
-
-import java.net.URL;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MovieItemAdapter.MovieItemAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -49,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private static final String GRID_STATE_RESULT = "grid_state";
     public static final String SEARCH_TYPE = "searchType";
     private static final int MOVIE_LOADER_ID = 1;
+    private static final int MOVIE_LOADER_TOP_ID = 2;
     private int mPosition = RecyclerView.NO_POSITION;
     private RecyclerView mRecyclerView;
     private MovieItemAdapter mMovieItemAdapter;
@@ -57,7 +51,8 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private ImageView mImageNoInternet;
     private MoviesResult result;
     private boolean isConnected;
-    private static Bundle gridState;
+    private static Bundle activityStateBundle;
+    private String lastTypeSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,15 +90,15 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
          * callback. In our case, we don't actually use the Bundle, but it's here in case we wanted
          * to.
          */
-        Bundle bundleForLoader = createBundleToLoader(POPULAR_MOVIES);
+        //Bundle bundleForLoader = createBundleToLoader(POPULAR_MOVIES);
         /*
          * Ensures a loader is initialized and active. If the loader doesn't already exist, one is
          * created and (if the activity/fragment is currently started) starts the loader. Otherwise
          * the last created loader is re-used.
          */
-        showLoading();
 
-        getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, callbacks);
+        lastTypeSelected = POPULAR_MOVIES;
+        getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), callbacks);
 
         MovieSyncUtils.initialized(this, POPULAR_MOVIES, isOnline());
 
@@ -165,14 +160,17 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 //invalidateData();
                 //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), this);
                 showLoading();
-                MovieSyncUtils.startImmediateSync(this, POPULAR_MOVIES);
+                lastTypeSelected = POPULAR_MOVIES;
+                getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), MainActivity.this);
                 return true;
 
             case R.id.action_top_rated:
                 //invalidateData();
                 //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), this);
                 showLoading();
-                MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
+                lastTypeSelected = TOP_RATED_MOVIES;
+                //MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
+                getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), MainActivity.this);
                 return true;
         }
 
@@ -198,10 +196,12 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         super.onPause();
         Log.v(TAG, "onPause");
 
-        gridState = new Bundle();
+        activityStateBundle = new Bundle();
         Parcelable state = mRecyclerView.getLayoutManager().onSaveInstanceState();
-        gridState.putParcelable(GRID_STATE_RESULT, state);
 
+        activityStateBundle.putParcelable(GRID_STATE_RESULT, state);
+        activityStateBundle.putString(SEARCH_TYPE, lastTypeSelected);
+        Log.v(TAG, "onResume 2");
     }
 
     @Override
@@ -209,11 +209,22 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         super.onResume();
         Log.v(TAG, "onResume");
 
-        if(gridState != null) {
-            Log.v(TAG, "onResume - onRestoreInstanceState of grid");
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(gridState.getParcelable(GRID_STATE_RESULT));
-        }
+        showLoading();
+        LoaderManager.LoaderCallbacks<Cursor> callbacks = MainActivity.this;
 
+        if(activityStateBundle != null) {
+
+            if(activityStateBundle.getString(SEARCH_TYPE) == TOP_RATED_MOVIES) {
+                String type = activityStateBundle.getString(SEARCH_TYPE);
+                getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID,
+                        createBundleToLoader(TOP_RATED_MOVIES),
+                        callbacks);
+            }
+
+            Log.v(TAG, "onResume - onRestoreInstanceState of grid");
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(activityStateBundle.getParcelable(GRID_STATE_RESULT));
+
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -221,12 +232,18 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     @Override
     public Loader<Cursor> onCreateLoader(int loaderId, @Nullable final Bundle loaderArgs) {
 
+        Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
+
+        String type = (String) loaderArgs.get(SEARCH_TYPE);
+        String[] selectionArguments = new String[]{type};
+
         switch (loaderId) {
 
             case MOVIE_LOADER_ID:
-                Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
 
-                return new CursorLoader(this, movieQueryUri, MovieContract.MovieEntry.MOVIES_PROJECTION, null, null , null);
+                return new CursorLoader(this, movieQueryUri, MovieContract.MovieEntry.MOVIES_PROJECTION,
+                        MovieContract.MovieEntry.COLUMN_SEARCH_TYPE + " = ? ",
+                        selectionArguments , null);
 
             default:
                 throw new RuntimeException("Loader Not Implemented: " + loaderId);
@@ -249,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
         if(mPosition == RecyclerView.NO_POSITION) {
             mPosition = 0;
-        } else if(gridState == null) {
+        } else if(activityStateBundle == null) {
             mRecyclerView.smoothScrollToPosition(mPosition);
         }
 

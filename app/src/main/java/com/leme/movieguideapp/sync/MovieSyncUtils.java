@@ -104,12 +104,14 @@ public class MovieSyncUtils {
                 String sqlSelectForSearchType = MovieContract.MovieEntry.getSqlSelectForSearchType(searchType);
                 Log.v(TAG, "doInBackground sqlSelectForSearchType: " + sqlSelectForSearchType);
 
+                String[] selectionArguments = new String[]{searchType};
+
                 /* Here, we perform the query to check to see if we have any weather data */
                 Cursor cursor = context.getContentResolver().query(
                         movieQueryUri,
                         MovieContract.MovieEntry.MOVIES_PROJECTION,
-                        sqlSelectForSearchType,
-                        null,
+                        MovieContract.MovieEntry.COLUMN_SEARCH_TYPE + " = ? ",
+                        selectionArguments,
                         null);
 
                 Log.v(TAG, "cursor.getCount(): " + cursor.getCount());
@@ -132,12 +134,6 @@ public class MovieSyncUtils {
         Intent intentToSyncImmediately = new Intent(context, MovieSyncIntentService.class);
         intentToSyncImmediately.putExtra(MainActivity.SEARCH_TYPE, searchType);
         context.startService(intentToSyncImmediately);
-
-    }
-
-    public static void startUpdateMovie(final Context context, Uri uri, boolean favorite) {
-
-        Log.v(TAG, "startUpdateMovie: " + uri);
 
     }
 

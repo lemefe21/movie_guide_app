@@ -51,7 +51,13 @@ public class MovieSyncTask {
                 movieValues = MovieUtils.updateValuesWithFavoritedMovies(movieContentResolver, movieValues, searchType);
 
                 //delete the old data and insert the new
-                movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
+                //movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
+
+                String[] selectionArguments = new String[]{searchType};
+                int delete = movieContentResolver.delete(MovieContract.MovieEntry.CONTENT_URI,
+                        MovieContract.MovieEntry.COLUMN_SEARCH_TYPE + " = ? ",
+                        selectionArguments);
+
 
                 //Insert our new movie data into MovieGuide's ContentProvider
                 movieContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, movieValues);
