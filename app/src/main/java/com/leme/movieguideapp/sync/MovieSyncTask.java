@@ -30,7 +30,6 @@ public class MovieSyncTask {
      */
     synchronized public static void syncMovie(Context context, String searchType) {
 
-        //String searchTypeExtra = (String) intent.getSerializableExtra(MainActivity.SEARCH_TYPE);
         Log.v(TAG, "syncMovie searchType: " + searchType);
 
         try {

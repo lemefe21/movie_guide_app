@@ -170,19 +170,16 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         Log.v(TAG, "onOptionsItemSelected: " + itemId);
         switch (itemId){
             case R.id.action_popular:
-                //invalidateData();
-                //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), this);
                 showLoading();
                 setSearchTypePreference(preferences, POPULAR_MOVIES);
+                MovieSyncUtils.startImmediateSync(this, POPULAR_MOVIES);
                 getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), MainActivity.this);
                 return true;
 
             case R.id.action_top_rated:
-                //invalidateData();
-                //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), this);
                 showLoading();
                 setSearchTypePreference(preferences, TOP_RATED_MOVIES);
-                //MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
+                MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
                 getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), MainActivity.this);
                 return true;
         }
