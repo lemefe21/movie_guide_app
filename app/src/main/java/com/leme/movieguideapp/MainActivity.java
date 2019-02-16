@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         preferences = getSharedPreferences(SEARCH_TYPE_PREFERENCES, MODE_PRIVATE);
         lastTypeSelected = preferences.getString(SEARCH_TYPE, POPULAR_MOVIES);
 
+        showLoading();
+
         getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, createBundleToLoader(lastTypeSelected), callbacks);
 
         MovieSyncUtils.initialized(this, POPULAR_MOVIES, isOnline());
@@ -218,16 +220,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         super.onResume();
         Log.v(TAG, "onResume");
 
-        showLoading();
-        //LoaderManager.LoaderCallbacks<Cursor> callbacks = MainActivity.this;
-
         if(activityStateBundle != null) {
-
-           /* if(preferences.contains(SEARCH_TYPE)) {
-                getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID,
-                        createBundleToLoader(preferences.getString(SEARCH_TYPE, POPULAR_MOVIES)),
-                        callbacks);
-            }*/
 
             Log.v(TAG, "onResume - onRestoreInstanceState of grid");
             mRecyclerView.getLayoutManager().onRestoreInstanceState(activityStateBundle.getParcelable(GRID_STATE_RESULT));
