@@ -2,6 +2,7 @@ package com.leme.movieguideapp;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     private static final String MOVIE_CLICKED = "movie_clicked";
     private static Movie movie;
     private static final String TAG = "MoviesApp_Details";
+    public static final String SEARCH_TYPE = "searchType";
 
     private ImageView mPoster;
     private TextView mTitle;
@@ -37,6 +39,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     private boolean isFavorited;
     private Uri uri;
     private Cursor cursor;
+    private String typeDetail;
 
     private static final int ID_DETAIL_LOADER = 3;
     //private static final int ID_FAVORITE_LOADER = 4;
@@ -104,6 +107,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
                 .error(R.drawable.poster_default)
                 .into(mPoster);
 
+        typeDetail = data.getString(MovieContract.MovieEntry.INDEX_MOVIE_SEARCH_TYPE);
         mTitle.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_TITLE));
         mOverview.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_OVERVIEW));
         mVoteAverage.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_VOTE_AVERAGE));
@@ -165,7 +169,6 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {}
 
-    }
 }

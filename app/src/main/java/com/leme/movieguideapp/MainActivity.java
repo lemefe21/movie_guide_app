@@ -3,6 +3,7 @@ package com.leme.movieguideapp;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -35,6 +36,7 @@ import com.leme.movieguideapp.sync.MovieSyncUtils;
 
 public class MainActivity extends AppCompatActivity implements MovieItemAdapter.MovieItemAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String SEARCH_TYPE_PREFERENCES = "search_type_preferences";
     private static final String TAG = "MoviesApp_Main";
     public static final String POPULAR_MOVIES = "popular";
     public static final String TOP_RATED_MOVIES = "top_rated";
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private boolean isConnected;
     private static Bundle activityStateBundle;
     private String lastTypeSelected;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,11 +100,19 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
          * the last created loader is re-used.
          */
 
-        lastTypeSelected = POPULAR_MOVIES;
-        getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), callbacks);
+        preferences = getSharedPreferences(SEARCH_TYPE_PREFERENCES, MODE_PRIVATE);
+        lastTypeSelected = preferences.getString(SEARCH_TYPE, POPULAR_MOVIES);
+
+        getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, createBundleToLoader(lastTypeSelected), callbacks);
 
         MovieSyncUtils.initialized(this, POPULAR_MOVIES, isOnline());
 
+    }
+
+    private void setSearchTypePreference(SharedPreferences preferences, String type) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SEARCH_TYPE, type);
+        editor.commit();
     }
 
     private Bundle createBundleToLoader(String searchType) {
@@ -160,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 //invalidateData();
                 //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), this);
                 showLoading();
-                lastTypeSelected = POPULAR_MOVIES;
+                setSearchTypePreference(preferences, POPULAR_MOVIES);
                 getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(POPULAR_MOVIES), MainActivity.this);
                 return true;
 
@@ -168,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 //invalidateData();
                 //getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), this);
                 showLoading();
-                lastTypeSelected = TOP_RATED_MOVIES;
+                setSearchTypePreference(preferences, TOP_RATED_MOVIES);
                 //MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
                 getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), MainActivity.this);
                 return true;
@@ -198,10 +209,8 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
         activityStateBundle = new Bundle();
         Parcelable state = mRecyclerView.getLayoutManager().onSaveInstanceState();
-
         activityStateBundle.putParcelable(GRID_STATE_RESULT, state);
-        activityStateBundle.putString(SEARCH_TYPE, lastTypeSelected);
-        Log.v(TAG, "onResume 2");
+
     }
 
     @Override
@@ -210,16 +219,15 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         Log.v(TAG, "onResume");
 
         showLoading();
-        LoaderManager.LoaderCallbacks<Cursor> callbacks = MainActivity.this;
+        //LoaderManager.LoaderCallbacks<Cursor> callbacks = MainActivity.this;
 
         if(activityStateBundle != null) {
 
-            if(activityStateBundle.getString(SEARCH_TYPE) == TOP_RATED_MOVIES) {
-                String type = activityStateBundle.getString(SEARCH_TYPE);
+           /* if(preferences.contains(SEARCH_TYPE)) {
                 getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID,
-                        createBundleToLoader(TOP_RATED_MOVIES),
+                        createBundleToLoader(preferences.getString(SEARCH_TYPE, POPULAR_MOVIES)),
                         callbacks);
-            }
+            }*/
 
             Log.v(TAG, "onResume - onRestoreInstanceState of grid");
             mRecyclerView.getLayoutManager().onRestoreInstanceState(activityStateBundle.getParcelable(GRID_STATE_RESULT));
