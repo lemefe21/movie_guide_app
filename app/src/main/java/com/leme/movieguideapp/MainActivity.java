@@ -31,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.leme.movieguideapp.adapters.MovieItemAdapter;
 import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.models.MoviesResult;
 import com.leme.movieguideapp.sync.MovieSyncUtils;

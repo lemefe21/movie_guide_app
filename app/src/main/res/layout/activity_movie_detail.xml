@@ -27,30 +27,6 @@
             android:text="Favorite: No"/>
 
         <TextView
-            android:id="@+id/tv_reviews"
-            style="@style/DetailMovieTitles"
-            android:text="@string/movie_reviews"/>
-
-        <ProgressBar
-            android:id="@+id/pb_loading_reviews"
-            android:layout_height="@dimen/main_loading_indicator_height"
-            android:layout_width="@dimen/main_loading_indicator_width"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tv_detail_author"
-            style="@style/DetailMovieSubTitles"
-            android:visibility="gone"
-            android:text="@string/author"/>
-
-        <TextView
-            android:id="@+id/tv_detail_content_review"
-            style="@style/DetailMovieSubTitles"
-            android:visibility="gone"
-            android:text="@string/content_review"/>
-
-        <TextView
             android:id="@+id/tv_detail_title"
             style="@style/DetailMovieTitles"
             android:text="@string/movie_title"/>
@@ -89,6 +65,28 @@
             android:id="@+id/tv_detail_movie_release_date"
             style="@style/DetailMovieSubTitles"
             android:text="@string/vote_release_date"/>
+
+        <TextView
+            android:id="@+id/tv_reviews"
+            style="@style/DetailMovieTitles"
+            android:text="@string/movie_reviews"/>
+
+        <ProgressBar
+            android:id="@+id/pb_loading_reviews"
+            android:layout_height="@dimen/main_loading_indicator_height"
+            android:layout_width="@dimen/main_loading_indicator_width"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_detail_movie_review"
+            style="@style/DetailMovieSubTitles"
+            android:visibility="gone"
+            android:text="@string/reviews"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_reviews_movies"
+            style="@style/DetailMovieListReview"/>
 
     </LinearLayout>
 

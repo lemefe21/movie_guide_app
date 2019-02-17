@@ -1,4 +1,4 @@
-package com.leme.movieguideapp;
+package com.leme.movieguideapp.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,17 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.leme.movieguideapp.R;
 import com.leme.movieguideapp.data.MovieContract;
-import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.utilities.MovieUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.MovieItemAdapterViewHolder>{
 
-    //private List<Movie> mMovieList;
     private final MovieItemAdapterOnClickHandler mClickHandler;
     private Context mContext;
     private Cursor cursor;
@@ -54,8 +51,6 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
     public void onBindViewHolder(@NonNull MovieItemAdapterViewHolder movieItemAdapterViewHolder, int position) {
 
         cursor.moveToPosition(position);
-
-        //Movie movie = mMovieList.get(position);
 
         movieItemAdapterViewHolder.mMovieNameTextView.setText(cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_TITLE));
 

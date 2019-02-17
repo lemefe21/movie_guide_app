@@ -12,17 +12,24 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.leme.movieguideapp.adapters.MovieReviewsAdapter;
 import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.helpers.MovieHelper;
 import com.leme.movieguideapp.models.Movie;
+import com.leme.movieguideapp.models.ReviewResult;
+import com.leme.movieguideapp.tasks.MovieReviewTask;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 public class MovieDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -37,20 +44,17 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     private TextView mVoteAverage;
     private TextView mReleaseData;
     private TextView btnFavorite;
-    private TextView mAuthorReview;
-    private TextView mContentReview;
+    private TextView mStatusReview;
     private ProgressBar mLoadingReview;
+    private RecyclerView mRecyclerViewReviews;
+    private MovieReviewsAdapter mMovieReviewsAdapter;
     private boolean isFavorited;
     private int idMovieClicked;
-    private Uri uri;
-    private Cursor cursor;
     private String typeDetail;
+    private Cursor cursor;
+    private Uri uri;
 
     private static final int ID_DETAIL_LOADER = 3;
-    //private static final int ID_FAVORITE_LOADER = 4;
-    //private static final int ID_VIDEOS_LOADER = 5;
-    //private static final int ID_REVIEWS_LOADER = 6;
-    //private static final String FAVORITE_VALUE = "favorite";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +68,18 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         mReleaseData = findViewById(R.id.tv_detail_movie_release_date);
         btnFavorite = findViewById(R.id.btn_favorite_movie);
         mLoadingReview = findViewById(R.id.pb_loading_reviews);
-        mAuthorReview = findViewById(R.id.tv_detail_author);
-        mContentReview = findViewById(R.id.tv_detail_content_review);
+        mRecyclerViewReviews = findViewById(R.id.recyclerview_reviews_movies);
+        mStatusReview = findViewById(R.id.tv_detail_movie_review);
 
         Intent intent = getIntent();
         if(intent.hasExtra("id")) {
             idMovieClicked = intent.getIntExtra("id", 0);
         }
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerViewReviews.setLayoutManager(linearLayoutManager);
+        mMovieReviewsAdapter = new MovieReviewsAdapter(this);
+        mRecyclerViewReviews.setAdapter(mMovieReviewsAdapter);
 
         uri = getIntent().getData();
         if (uri == null) throw new NullPointerException("URI for DetailActivity cannot be null");
@@ -80,9 +89,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         btnFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 changeFavoriteStatus();
-
             }
         });
 
@@ -203,28 +210,27 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
     public void startReviewLoading() {
         mLoadingReview.setVisibility(View.VISIBLE);
+        mRecyclerViewReviews.setVisibility(View.INVISIBLE);
     }
 
-    public void showReviewLoadingResults(String author, String content) {
+    public void showReviewLoadingResults(List<ReviewResult> reviewResult) {
         mLoadingReview.setVisibility(View.GONE);
-        mAuthorReview.setVisibility(View.VISIBLE);
-        mContentReview.setVisibility(View.VISIBLE);
-        mAuthorReview.setText(author);
-        mContentReview.setText(content);
+        mStatusReview.setVisibility(View.GONE);
+        mRecyclerViewReviews.setVisibility(View.VISIBLE);
+        mMovieReviewsAdapter.setReviewData(reviewResult);
     }
 
     public void showEmptyReviewResults(boolean isConnected) {
         if(!isConnected) {
             mLoadingReview.setVisibility(View.GONE);
-            mAuthorReview.setVisibility(View.VISIBLE);
-            mContentReview.setVisibility(View.VISIBLE);
-            mAuthorReview.setText(getString(R.string.tv_no_internet));
-            mContentReview.setText(getString(R.string.tv_no_internet));
+            mStatusReview.setVisibility(View.VISIBLE);
+            mStatusReview.setText(getString(R.string.tv_no_internet));
+            mRecyclerViewReviews.setVisibility(View.GONE);
         } else {
             mLoadingReview.setVisibility(View.GONE);
-            mAuthorReview.setVisibility(View.VISIBLE);
-            mAuthorReview.setText(getString(R.string.no_review));
-            mContentReview.setVisibility(View.GONE);
+            mStatusReview.setVisibility(View.VISIBLE);
+            mStatusReview.setText(getString(R.string.no_review));
+            mRecyclerViewReviews.setVisibility(View.GONE);
         }
     }
 }

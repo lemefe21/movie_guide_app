@@ -1,4 +1,4 @@
-package com.leme.movieguideapp;
+package com.leme.movieguideapp.tasks;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.leme.movieguideapp.MovieDetailActivity;
 import com.leme.movieguideapp.models.ReviewResult;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
@@ -13,7 +14,7 @@ import com.leme.movieguideapp.utilities.OpenMovieJSONUtils;
 import java.net.URL;
 import java.util.List;
 
-public class MovieReviewTask extends AsyncTask<Integer, Void, ReviewResult> {
+public class MovieReviewTask extends AsyncTask<Integer, Void, List<ReviewResult>> {
 
     private static final String TAG = "MoviesApp_ReviewTask";
     private MovieDetailActivity movieDetailActivity;
@@ -30,7 +31,7 @@ public class MovieReviewTask extends AsyncTask<Integer, Void, ReviewResult> {
     }
 
     @Override
-    protected ReviewResult doInBackground(Integer... params) {
+    protected List<ReviewResult> doInBackground(Integer... params) {
 
         Integer movieId = params[0];
         Log.v(TAG, "doInBackground - movieId: " + movieId);
@@ -47,7 +48,7 @@ public class MovieReviewTask extends AsyncTask<Integer, Void, ReviewResult> {
 
                 List<ReviewResult> listReviewResultFromJSON = OpenMovieJSONUtils.getListReviewResultFromJSON(jsonResponseFromHttpUrl);
 
-                return listReviewResultFromJSON.get(0);
+                return listReviewResultFromJSON;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -61,12 +62,12 @@ public class MovieReviewTask extends AsyncTask<Integer, Void, ReviewResult> {
     }
 
     @Override
-    protected void onPostExecute(ReviewResult reviewResult) {
+    protected void onPostExecute(List<ReviewResult> reviewResult) {
         super.onPostExecute(reviewResult);
 
-        if(reviewResult != null && isConnected) {
+        if(reviewResult != null && reviewResult.size() > 0 && isConnected) {
 
-            movieDetailActivity.showReviewLoadingResults(reviewResult.getAuthor(), reviewResult.getContent());
+            movieDetailActivity.showReviewLoadingResults(reviewResult);
 
         } else {
 
