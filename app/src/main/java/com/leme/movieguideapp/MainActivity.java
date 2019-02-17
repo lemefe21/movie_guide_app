@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         Intent intent = new Intent(this, MovieDetailActivity.class);
         Uri uriForIdClicked = MovieContract.MovieEntry.buildMovieUriWithId(movieIdClicked);
         intent.setData(uriForIdClicked);
+        intent.putExtra("id", movieIdClicked);
         startActivity(intent);
     }
 

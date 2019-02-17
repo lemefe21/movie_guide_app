@@ -15,4 +15,9 @@
     <string name="action_favorites">Favorites</string>
     <string name="content_authority">com.leme.movieguideapp</string>
     <string name="no_favorited_movies">You have not selected any movie as a favorite... :(</string>
+    <string name="movie_reviews">Reviews</string>
+    <string name="author">Author</string>
+    <string name="content_review">Content</string>
+    <string name="tv_no_internet">No internet connection</string>
+    <string name="no_review">No review yet...</string>
 </resources>

@@ -15,20 +15,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.leme.movieguideapp.data.MovieContract;
+import com.leme.movieguideapp.helpers.MovieHelper;
 import com.leme.movieguideapp.models.Movie;
-import com.leme.movieguideapp.utilities.MovieUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 public class MovieDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String MOVIE_CLICKED = "movie_clicked";
-    private static Movie movie;
     private static final String TAG = "MoviesApp_Details";
+    private static final String MOVIE_CLICKED = "movie_clicked";
     public static final String SEARCH_TYPE = "searchType";
+    private static Movie movie;
 
     private ImageView mPoster;
     private TextView mTitle;
@@ -36,7 +37,11 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     private TextView mVoteAverage;
     private TextView mReleaseData;
     private TextView btnFavorite;
+    private TextView mAuthorReview;
+    private TextView mContentReview;
+    private ProgressBar mLoadingReview;
     private boolean isFavorited;
+    private int idMovieClicked;
     private Uri uri;
     private Cursor cursor;
     private String typeDetail;
@@ -58,6 +63,14 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         mVoteAverage = findViewById(R.id.tv_detail_movie_vote_average);
         mReleaseData = findViewById(R.id.tv_detail_movie_release_date);
         btnFavorite = findViewById(R.id.btn_favorite_movie);
+        mLoadingReview = findViewById(R.id.pb_loading_reviews);
+        mAuthorReview = findViewById(R.id.tv_detail_author);
+        mContentReview = findViewById(R.id.tv_detail_content_review);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("id")) {
+            idMovieClicked = intent.getIntExtra("id", 0);
+        }
 
         uri = getIntent().getData();
         if (uri == null) throw new NullPointerException("URI for DetailActivity cannot be null");
@@ -169,13 +182,17 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
         bindMovieDetails(data);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadMovieReviews();
-
         loadMovieTrailersLinks();
-
     }
 
     private void loadMovieReviews() {
+        new MovieReviewTask(this).execute(idMovieClicked);
     }
 
     private void loadMovieTrailersLinks() {
@@ -184,4 +201,30 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {}
 
+    public void startReviewLoading() {
+        mLoadingReview.setVisibility(View.VISIBLE);
+    }
+
+    public void showReviewLoadingResults(String author, String content) {
+        mLoadingReview.setVisibility(View.GONE);
+        mAuthorReview.setVisibility(View.VISIBLE);
+        mContentReview.setVisibility(View.VISIBLE);
+        mAuthorReview.setText(author);
+        mContentReview.setText(content);
+    }
+
+    public void showEmptyReviewResults(boolean isConnected) {
+        if(!isConnected) {
+            mLoadingReview.setVisibility(View.GONE);
+            mAuthorReview.setVisibility(View.VISIBLE);
+            mContentReview.setVisibility(View.VISIBLE);
+            mAuthorReview.setText(getString(R.string.tv_no_internet));
+            mContentReview.setText(getString(R.string.tv_no_internet));
+        } else {
+            mLoadingReview.setVisibility(View.GONE);
+            mAuthorReview.setVisibility(View.VISIBLE);
+            mAuthorReview.setText(getString(R.string.no_review));
+            mContentReview.setVisibility(View.GONE);
+        }
+    }
 }

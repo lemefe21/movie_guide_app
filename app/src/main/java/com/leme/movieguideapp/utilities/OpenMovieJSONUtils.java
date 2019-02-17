@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.models.MoviesResult;
 import com.leme.movieguideapp.data.MovieContract.*;
+import com.leme.movieguideapp.models.Review;
+import com.leme.movieguideapp.models.ReviewResult;
 
 import java.util.List;
 
@@ -18,6 +20,13 @@ public class OpenMovieJSONUtils {
         MoviesResult results = gson.fromJson(movieJSON, MoviesResult.class);
 
         return results.getResults();
+    }
+
+    public static List<ReviewResult> getListReviewResultFromJSON(String reviewJSON) {
+
+        Review review = gson.fromJson(reviewJSON, Review.class);
+
+        return review.getResults();
     }
 
     public static ContentValues[] getListMoviesContentValuesFromJSON(String movieJSON, String searchType) {

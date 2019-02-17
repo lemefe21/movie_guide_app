@@ -1,4 +1,4 @@
-package com.leme.movieguideapp;
+package com.leme.movieguideapp.helpers;
 
 import android.database.Cursor;
 
