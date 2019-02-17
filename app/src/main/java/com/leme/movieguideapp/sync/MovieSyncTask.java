@@ -57,7 +57,6 @@ public class MovieSyncTask {
                         MovieContract.MovieEntry.COLUMN_SEARCH_TYPE + " = ? ",
                         selectionArguments);
 
-
                 //Insert our new movie data into MovieGuide's ContentProvider
                 movieContentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, movieValues);
 

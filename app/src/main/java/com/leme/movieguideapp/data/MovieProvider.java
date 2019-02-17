@@ -83,10 +83,6 @@ public class MovieProvider extends ContentProvider {
              */
             case CODE_MOVIE:
 
-                String[] a = projection;
-                String b = selection;
-                String[] c = selectionArgs;
-
                 cursor = movieDbHelper.getReadableDatabase().query(
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,

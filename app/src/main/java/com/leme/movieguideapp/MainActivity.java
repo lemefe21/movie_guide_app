@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.models.MoviesResult;
@@ -40,11 +41,12 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
     private static final String TAG = "MoviesApp_Main";
     public static final String POPULAR_MOVIES = "popular";
     public static final String TOP_RATED_MOVIES = "top_rated";
+    public static final String FAVORITES_MOVIES = "favorites";
+    public static final String ARGS_FAVORITES_MOVIES = "1";
     private static final String STATE_RESULT = "state_list_movie";
     private static final String GRID_STATE_RESULT = "grid_state";
     public static final String SEARCH_TYPE = "searchType";
     private static final int MOVIE_LOADER_ID = 1;
-    private static final int MOVIE_LOADER_TOP_ID = 2;
     private int mPosition = RecyclerView.NO_POSITION;
     private RecyclerView mRecyclerView;
     private MovieItemAdapter mMovieItemAdapter;
@@ -182,6 +184,12 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
                 MovieSyncUtils.startImmediateSync(this, TOP_RATED_MOVIES);
                 getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(TOP_RATED_MOVIES), MainActivity.this);
                 return true;
+
+            case R.id.action_favorites:
+                showLoading();
+                setSearchTypePreference(preferences, FAVORITES_MOVIES);
+                getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, createBundleToLoader(FAVORITES_MOVIES), MainActivity.this);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -232,16 +240,24 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
         Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
 
-        String type = (String) loaderArgs.get(SEARCH_TYPE);
-        String[] selectionArguments = new String[]{type};
 
         switch (loaderId) {
 
             case MOVIE_LOADER_ID:
 
-                return new CursorLoader(this, movieQueryUri, MovieContract.MovieEntry.MOVIES_PROJECTION,
-                        MovieContract.MovieEntry.COLUMN_SEARCH_TYPE + " = ? ",
-                        selectionArguments , null);
+                if(!preferences.getString(SEARCH_TYPE, POPULAR_MOVIES).equals(FAVORITES_MOVIES)) {
+                    String type = (String) loaderArgs.get(SEARCH_TYPE);
+                    String[] selectionArguments = new String[]{type};
+                    return new CursorLoader(this, movieQueryUri, MovieContract.MovieEntry.MOVIES_PROJECTION,
+                            MovieContract.MovieEntry.COLUMN_SEARCH_TYPE + " = ? ",
+                            selectionArguments , null);
+                } else {
+                    String[] selectionArguments = new String[]{ARGS_FAVORITES_MOVIES};
+                    return new CursorLoader(this, movieQueryUri, MovieContract.MovieEntry.MOVIES_PROJECTION,
+                            MovieContract.MovieEntry.COLUMN_FAVORITE + " = ? ",
+                            selectionArguments , null);
+                }
+
 
             default:
                 throw new RuntimeException("Loader Not Implemented: " + loaderId);
@@ -273,6 +289,10 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         isConnected = isOnline();
         if(data.getCount() == 0 && !isOnline()) {
             showErrorMessage(isConnected);
+        }
+
+        if(data.getCount() == 0 && preferences.getString(SEARCH_TYPE, POPULAR_MOVIES).equals(FAVORITES_MOVIES)){
+            Toast.makeText(this, getString(R.string.no_favorited_movies), Toast.LENGTH_LONG).show();
         }
 
         if(data.getCount() != 0) {

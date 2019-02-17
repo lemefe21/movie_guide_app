@@ -12,5 +12,7 @@
     <string name="vote_release_date">release date</string>
     <string name="action_popular">Popular</string>
     <string name="action_top_rated">Top rated</string>
+    <string name="action_favorites">Favorites</string>
     <string name="content_authority">com.leme.movieguideapp</string>
+    <string name="no_favorited_movies">You have not selected any movie as a favorite... :(</string>
 </resources>
