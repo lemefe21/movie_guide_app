@@ -68,25 +68,28 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
             @Override
             public void onClick(View v) {
 
-                Log.v(TAG, "onClick - cursor data:" + cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_FAVORITE));
-                Log.v(TAG, "Favorited this movie: " + cursor.getString(MovieContract.MovieEntry.INDEX_MOVIE_FAVORITE));
-
-                ContentValues movieValues = new ContentValues();
-                movieValues.put(MovieContract.MovieEntry.COLUMN_FAVORITE, (!isFavorited ? 1 : 0));
-
-                int countRowsUpdated = getContentResolver().update(uri,
-                        movieValues,
-                        null,
-                        null);
-
-                if(countRowsUpdated > 0) {
-                    Log.v(TAG, "Favorite movie: " + countRowsUpdated + " rows update");
-                } else {
-                    //throw new IllegalStateException ("No row updated...");
-                }
+                changeFavoriteStatus();
 
             }
         });
+
+    }
+
+    private void changeFavoriteStatus() {
+        Log.v(TAG, "onClick - cursor data:" + movie.isFavorite());
+        Log.v(TAG, "Favorited this movie: " + movie.isFavorite());
+
+        ContentValues movieValues = new ContentValues();
+        movieValues.put(MovieContract.MovieEntry.COLUMN_FAVORITE, (!isFavorited ? 1 : 0));
+
+        int countRowsUpdated = getContentResolver().update(uri,
+                movieValues,
+                null,
+                null);
+
+        if(countRowsUpdated > 0) {
+            Log.v(TAG, "Favorite movie: " + countRowsUpdated + " rows update");
+        }
 
     }
 
@@ -100,21 +103,22 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
     private void bindMovieDetails(Cursor data) {
 
-        Log.v(TAG, "bindMovieDetails - cursor data:" + data.getString(MovieContract.MovieEntry.INDEX_MOVIE_ID));
+        movie = MovieHelper.getMovieByCursor(data);
+
+        Log.v(TAG, "bindMovieDetails - cursor data:" + movie.getId());
 
         Picasso.with(this)
-                .load(NetworkUtils.getBaseImageURL() + data.getString(MovieContract.MovieEntry.INDEX_MOVIE_POSTER_PATH))
+                .load(NetworkUtils.getBaseImageURL() + movie.getPoster_path())
                 .error(R.drawable.poster_default)
                 .into(mPoster);
 
-        typeDetail = data.getString(MovieContract.MovieEntry.INDEX_MOVIE_SEARCH_TYPE);
-        mTitle.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_TITLE));
-        mOverview.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_OVERVIEW));
-        mVoteAverage.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_VOTE_AVERAGE));
-        mReleaseData.setText(data.getString(MovieContract.MovieEntry.INDEX_MOVIE_RELEASE_DATE));
-        isFavorited = MovieUtils.checkIfMovieIsFavorite(data);
+        typeDetail = movie.getSearchType();
+        mTitle.setText(movie.getTitle());
+        mOverview.setText(movie.getOverview());
+        mVoteAverage.setText(String.valueOf(movie.getVote_average()));
+        mReleaseData.setText(movie.getRelease_date());
+        isFavorited = movie.isFavorite();
         setFavoriteTextView();
-        cursor = data;
 
     }
 
@@ -127,7 +131,6 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         switch (loaderId) {
 
             case ID_DETAIL_LOADER:
-
                 return new CursorLoader(this,
                         uri, MovieContract.MovieEntry.MOVIES_PROJECTION, null, null, null);
 
@@ -166,6 +169,16 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
         bindMovieDetails(data);
 
+        loadMovieReviews();
+
+        loadMovieTrailersLinks();
+
+    }
+
+    private void loadMovieReviews() {
+    }
+
+    private void loadMovieTrailersLinks() {
     }
 
     @Override

@@ -21,6 +21,8 @@ public class Movie implements Parcelable {
     private boolean favorite;
     private String searchType;
 
+    public Movie() {}
+
     private Movie(Parcel in) {
         vote_count = in.readInt();
         id = in.readInt();

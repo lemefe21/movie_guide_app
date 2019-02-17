@@ -11,6 +11,14 @@ public class MovieUtils {
 
     private static final String TAG = "MoviesApp_MovieUtils";
 
+    public static boolean checkIfMovieIsVideo(Cursor data) {
+        return (data.getInt(MovieEntry.INDEX_MOVIE_VIDEO) != 0);
+    }
+
+    public static boolean checkIfMovieIsAdult(Cursor data) {
+        return (data.getInt(MovieEntry.INDEX_MOVIE_ADULT) != 0);
+    }
+
     public static boolean checkIfMovieIsFavorite(Cursor data) {
         return (data.getInt(MovieEntry.INDEX_MOVIE_FAVORITE) != 0);
     }
