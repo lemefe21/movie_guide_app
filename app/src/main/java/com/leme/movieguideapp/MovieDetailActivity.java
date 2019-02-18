@@ -25,6 +25,7 @@ import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.helpers.MovieHelper;
 import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.models.ReviewResult;
+import com.leme.movieguideapp.models.VideoResult;
 import com.leme.movieguideapp.tasks.MovieReviewTask;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -213,11 +214,18 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         mRecyclerViewReviews.setVisibility(View.INVISIBLE);
     }
 
+    public void startVideoLoading() {
+
+    }
+
     public void showReviewLoadingResults(List<ReviewResult> reviewResult) {
         mLoadingReview.setVisibility(View.GONE);
         mStatusReview.setVisibility(View.GONE);
         mRecyclerViewReviews.setVisibility(View.VISIBLE);
         mMovieReviewsAdapter.setReviewData(reviewResult);
+    }
+
+    public void showVideoLoadingResults(List<VideoResult> videoResults) {
     }
 
     public void showEmptyReviewResults(boolean isConnected) {
@@ -233,4 +241,8 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
             mRecyclerViewReviews.setVisibility(View.GONE);
         }
     }
+
+    public void showVideoReviewResults(boolean isConnected) {
+    }
+
 }
