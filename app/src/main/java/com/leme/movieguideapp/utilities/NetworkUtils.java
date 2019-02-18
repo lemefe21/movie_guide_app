@@ -21,6 +21,7 @@ public class NetworkUtils {
     private static final String MOVIES_URL = "https://api.themoviedb.org/3/movie/";
     private static final String BASE_IMAGES_URL = "http://image.tmdb.org/t/p/w500//";
     private static final String REVIEW = "reviews";
+    private static final String VIDEOS = "videos";
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
     private static final String PAGE_PARAM = "page";
@@ -59,7 +60,27 @@ public class NetworkUtils {
             e.printStackTrace();
         }
 
-        Log.v(TAG, "Built The Movies URL: " + url);
+        Log.v(TAG, "Built The Movies URL Reviews: " + url);
+
+        return url;
+    }
+
+    public static URL buildUrlVideos(int movieId) {
+        Uri builtUri = Uri.parse(MOVIES_URL + movieId).buildUpon()
+                .appendPath(VIDEOS)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .appendQueryParameter(LANGUAGE_PARAM, LANGUAGE)
+                .appendQueryParameter(PAGE_PARAM, PAGE)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built The Movies URL Videos: " + url);
 
         return url;
     }

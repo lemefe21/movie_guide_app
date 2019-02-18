@@ -8,6 +8,8 @@ import com.leme.movieguideapp.models.MoviesResult;
 import com.leme.movieguideapp.data.MovieContract.*;
 import com.leme.movieguideapp.models.Review;
 import com.leme.movieguideapp.models.ReviewResult;
+import com.leme.movieguideapp.models.Video;
+import com.leme.movieguideapp.models.VideoResult;
 
 import java.util.List;
 
@@ -27,6 +29,13 @@ public class OpenMovieJSONUtils {
         Review review = gson.fromJson(reviewJSON, Review.class);
 
         return review.getResults();
+    }
+
+    public static List<VideoResult> getListVideoResultFromJSON(String reviewJSON) {
+
+        Video video = gson.fromJson(reviewJSON, Video.class);
+
+        return video.getResults();
     }
 
     public static ContentValues[] getListMoviesContentValuesFromJSON(String movieJSON, String searchType) {
