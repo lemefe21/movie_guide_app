@@ -67,6 +67,28 @@
             android:text="@string/vote_release_date"/>
 
         <TextView
+            android:id="@+id/tv_videos"
+            style="@style/DetailMovieTitles"
+            android:text="@string/movie_videos"/>
+
+        <ProgressBar
+            android:id="@+id/pb_loading_videos"
+            android:layout_height="@dimen/main_loading_indicator_height"
+            android:layout_width="@dimen/main_loading_indicator_width"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_detail_movie_video"
+            style="@style/DetailMovieSubTitles"
+            android:visibility="gone"
+            android:text="@string/reviews"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_videos_movies"
+            style="@style/DetailMovieListReview"/>
+
+        <TextView
             android:id="@+id/tv_reviews"
             style="@style/DetailMovieTitles"
             android:text="@string/movie_reviews"/>

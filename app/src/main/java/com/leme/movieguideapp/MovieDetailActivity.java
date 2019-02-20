@@ -12,31 +12,33 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.leme.movieguideapp.adapters.MovieReviewsAdapter;
+import com.leme.movieguideapp.adapters.MovieVideosAdapter;
 import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.helpers.MovieHelper;
 import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.models.ReviewResult;
 import com.leme.movieguideapp.models.VideoResult;
 import com.leme.movieguideapp.tasks.MovieReviewTask;
+import com.leme.movieguideapp.utilities.MovieUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class MovieDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieDetailActivity extends AppCompatActivity implements MovieVideosAdapter.MovieVideoAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MoviesApp_Details";
-    private static final String MOVIE_CLICKED = "movie_clicked";
-    public static final String SEARCH_TYPE = "searchType";
     private static Movie movie;
 
     private ImageView mPoster;
@@ -46,13 +48,16 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     private TextView mReleaseData;
     private TextView btnFavorite;
     private TextView mStatusReview;
+    private TextView mStatusVideo;
     private ProgressBar mLoadingReview;
+    private ProgressBar mLoadingVideos;
     private RecyclerView mRecyclerViewReviews;
     private MovieReviewsAdapter mMovieReviewsAdapter;
+    private MovieVideosAdapter mMovieVideosAdapter;
+    private RecyclerView mRecyclerViewVideos;
     private boolean isFavorited;
     private int idMovieClicked;
     private String typeDetail;
-    private Cursor cursor;
     private Uri uri;
 
     private static final int ID_DETAIL_LOADER = 3;
@@ -69,18 +74,19 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         mReleaseData = findViewById(R.id.tv_detail_movie_release_date);
         btnFavorite = findViewById(R.id.btn_favorite_movie);
         mLoadingReview = findViewById(R.id.pb_loading_reviews);
+        mLoadingVideos = findViewById(R.id.pb_loading_videos);
         mRecyclerViewReviews = findViewById(R.id.recyclerview_reviews_movies);
+        mRecyclerViewVideos = findViewById(R.id.recyclerview_videos_movies);
         mStatusReview = findViewById(R.id.tv_detail_movie_review);
+        mStatusVideo = findViewById(R.id.tv_detail_movie_video);
 
         Intent intent = getIntent();
         if(intent.hasExtra("id")) {
             idMovieClicked = intent.getIntExtra("id", 0);
         }
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerViewReviews.setLayoutManager(linearLayoutManager);
-        mMovieReviewsAdapter = new MovieReviewsAdapter(this);
-        mRecyclerViewReviews.setAdapter(mMovieReviewsAdapter);
+        setReviewsLayoutManager();
+        setVideosLayoutManager();
 
         uri = getIntent().getData();
         if (uri == null) throw new NullPointerException("URI for DetailActivity cannot be null");
@@ -94,6 +100,24 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
             }
         });
 
+    }
+
+    private void setReviewsLayoutManager() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerViewReviews.setLayoutManager(linearLayoutManager);
+        mMovieReviewsAdapter = new MovieReviewsAdapter(this);
+        mRecyclerViewReviews.setAdapter(mMovieReviewsAdapter);
+    }
+
+    private void setVideosLayoutManager() {
+        Display display = getWindowManager().getDefaultDisplay();
+        int numberOfColumns = MovieUtils.calculateBestSpanCount(display);
+        Log.v(TAG, "numberOfColumns to gridLayout: " + numberOfColumns);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
+        mRecyclerViewVideos.setLayoutManager(layoutManager);
+        mMovieVideosAdapter = new MovieVideosAdapter(this,this);
+        mRecyclerViewVideos.setAdapter(mMovieVideosAdapter);
     }
 
     private void changeFavoriteStatus() {
@@ -204,6 +228,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     }
 
     private void loadMovieTrailersLinks() {
+        //TODO loadMovieTrailersLinks
     }
 
     @Override
@@ -215,7 +240,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     }
 
     public void startVideoLoading() {
-
+        //TODO startVideoLoading
     }
 
     public void showReviewLoadingResults(List<ReviewResult> reviewResult) {
@@ -226,6 +251,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     }
 
     public void showVideoLoadingResults(List<VideoResult> videoResults) {
+        //TODO showVideoLoadingResults
     }
 
     public void showEmptyReviewResults(boolean isConnected) {
@@ -243,6 +269,12 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     }
 
     public void showVideoReviewResults(boolean isConnected) {
+        //TODO showVideoReviewResults
+    }
+
+    @Override
+    public void onClick(int movieId) {
+        //TODO onClick
     }
 
 }

@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -35,6 +34,7 @@ import com.leme.movieguideapp.adapters.MovieItemAdapter;
 import com.leme.movieguideapp.data.MovieContract;
 import com.leme.movieguideapp.models.MoviesResult;
 import com.leme.movieguideapp.sync.MovieSyncUtils;
+import com.leme.movieguideapp.utilities.MovieUtils;
 
 public class MainActivity extends AppCompatActivity implements MovieItemAdapter.MovieItemAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -72,15 +72,7 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         mRecyclerView = findViewById(R.id.recyclerview_movies);
         mImageNoInternet = findViewById(R.id.iv_image_no_internet);
 
-        int posterWidth = 500;
-        int numberOfColumns = calculateBestSpanCount(posterWidth);
-        Log.v(TAG, "numberOfColumns to gridLayout: " + numberOfColumns);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
-
-
-        mRecyclerView.setLayoutManager(layoutManager);
-        mMovieItemAdapter = new MovieItemAdapter(this,this);
-        mRecyclerView.setAdapter(mMovieItemAdapter);
+        setMovieLayoutManager();
 
         /*
          * From MainActivity, we have implemented the LoaderCallbacks interface with the type of
@@ -114,6 +106,16 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
 
     }
 
+    private void setMovieLayoutManager() {
+        Display display = getWindowManager().getDefaultDisplay();
+        int numberOfColumns = MovieUtils.calculateBestSpanCount(display);
+        Log.v(TAG, "numberOfColumns to gridLayout: " + numberOfColumns);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mMovieItemAdapter = new MovieItemAdapter(this,this);
+        mRecyclerView.setAdapter(mMovieItemAdapter);
+    }
+
     private void setSearchTypePreference(SharedPreferences preferences, String type) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(SEARCH_TYPE, type);
@@ -124,14 +126,6 @@ public class MainActivity extends AppCompatActivity implements MovieItemAdapter.
         Bundle bundle = new Bundle();
         bundle.putString(SEARCH_TYPE, searchType);
         return bundle;
-    }
-
-    private int calculateBestSpanCount(int posterWidth) {
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        float screenWidth = outMetrics.widthPixels;
-        return Math.round(screenWidth / posterWidth);
     }
 
     private void showMovieDataView() {

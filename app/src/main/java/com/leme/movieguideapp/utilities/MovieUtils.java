@@ -2,8 +2,11 @@ package com.leme.movieguideapp.utilities;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 
 import com.leme.movieguideapp.data.MovieContract.*;
 
@@ -88,5 +91,13 @@ public class MovieUtils {
                 sqlSelectForFavoritedMovies,
                 null,
                 null);
+    }
+
+    public static int calculateBestSpanCount(Display display) {
+        int posterWidth = 500;
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float screenWidth = outMetrics.widthPixels;
+        return Math.round(screenWidth / posterWidth);
     }
 }

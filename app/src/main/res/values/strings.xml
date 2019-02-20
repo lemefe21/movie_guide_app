@@ -20,5 +20,7 @@
     <string name="content_review">Content</string>
     <string name="tv_no_internet">No internet connection</string>
     <string name="no_review">No review yet...</string>
+    <string name="no_video">No trailer yet...</string>
     <string name="reviews">review</string>
+    <string name="movie_videos">Trailers</string>
 </resources>

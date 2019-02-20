@@ -35,11 +35,6 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.Movi
     @Override
     public MovieItemAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
-        /*Context context = mContext;
-        int layoutIdForListItem = R.layout.movie_list_item;
-        LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;*/
-
         View view = LayoutInflater.from(mContext).inflate(R.layout.movie_list_item, viewGroup, false);
         view.setFocusable(true);
 
