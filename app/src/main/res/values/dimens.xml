@@ -21,9 +21,12 @@
     <dimen name="detail_movie_poster_padding">@dimen/default_padding_8dp</dimen>
 
     <!-- movie_list_item dimens -->
-    <dimen name="item_card_margins">@dimen/default_padding_8dp</dimen>
+    <dimen name="item_card_margins">@dimen/default_padding_16dp</dimen>
     <dimen name="item_card_corner_radius">10dp</dimen>
     <dimen name="item_card_text">@dimen/default_textsize_16sp</dimen>
     <dimen name="item_card_padding">@dimen/default_padding_8dp</dimen>
+    <dimen name="default_margim_8dp">8dp</dimen>
+    <dimen name="image_thumbnail_height">110dp</dimen>
+    <dimen name="image_thumbnail_width">195dp</dimen>
 
 </resources>

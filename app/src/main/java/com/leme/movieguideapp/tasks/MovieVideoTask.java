@@ -72,7 +72,7 @@ public class MovieVideoTask extends AsyncTask<Integer, Void, List<VideoResult>> 
 
         } else {
 
-            movieDetailActivity.showVideoReviewResults(isConnected);
+            movieDetailActivity.showEmptyVideoResults(isConnected);
 
         }
 

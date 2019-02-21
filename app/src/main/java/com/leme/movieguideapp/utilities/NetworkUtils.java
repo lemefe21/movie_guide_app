@@ -20,11 +20,15 @@ public class NetworkUtils {
     private static final String PAGE = "1";
     private static final String MOVIES_URL = "https://api.themoviedb.org/3/movie/";
     private static final String BASE_IMAGES_URL = "http://image.tmdb.org/t/p/w500//";
+    private static final String BASE_THUMBNAIL_IMAGES_URL = "https://img.youtube.com/vi/";
+    public static final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
     private static final String REVIEW = "reviews";
     private static final String VIDEOS = "videos";
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
     private static final String PAGE_PARAM = "page";
+    private static final String DEFAULT_THUMBNAIL_SIZE = "/mqdefault.jpg";
+
 
     public static URL buildUrl(String searchType) {
         Uri builtUri = Uri.parse(MOVIES_URL + searchType).buildUpon()
@@ -109,5 +113,9 @@ public class NetworkUtils {
 
     public static String getBaseImageURL() {
         return NetworkUtils.BASE_IMAGES_URL;
+    }
+
+    public static String getBaseImageThumbnailURL(String videoResultKey) {
+        return BASE_THUMBNAIL_IMAGES_URL + videoResultKey + DEFAULT_THUMBNAIL_SIZE;
     }
 }

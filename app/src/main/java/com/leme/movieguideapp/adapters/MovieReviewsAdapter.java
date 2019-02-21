@@ -27,7 +27,6 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
     public MovieReviewsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
         View view = LayoutInflater.from(mContext).inflate(R.layout.movie_list_review, viewGroup, false);
-
         return new MovieReviewsAdapterViewHolder(view);
     }
 

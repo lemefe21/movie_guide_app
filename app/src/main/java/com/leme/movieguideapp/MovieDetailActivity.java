@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.leme.movieguideapp.adapters.MovieReviewsAdapter;
 import com.leme.movieguideapp.adapters.MovieVideosAdapter;
@@ -30,6 +31,7 @@ import com.leme.movieguideapp.models.Movie;
 import com.leme.movieguideapp.models.ReviewResult;
 import com.leme.movieguideapp.models.VideoResult;
 import com.leme.movieguideapp.tasks.MovieReviewTask;
+import com.leme.movieguideapp.tasks.MovieVideoTask;
 import com.leme.movieguideapp.utilities.MovieUtils;
 import com.leme.movieguideapp.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -77,6 +79,8 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
         mLoadingVideos = findViewById(R.id.pb_loading_videos);
         mRecyclerViewReviews = findViewById(R.id.recyclerview_reviews_movies);
         mRecyclerViewVideos = findViewById(R.id.recyclerview_videos_movies);
+        mRecyclerViewReviews.setNestedScrollingEnabled(false);
+        mRecyclerViewVideos.setNestedScrollingEnabled(false);
         mStatusReview = findViewById(R.id.tv_detail_movie_review);
         mStatusVideo = findViewById(R.id.tv_detail_movie_video);
 
@@ -228,7 +232,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
     }
 
     private void loadMovieTrailersLinks() {
-        //TODO loadMovieTrailersLinks
+        new MovieVideoTask(this).execute(idMovieClicked);
     }
 
     @Override
@@ -240,7 +244,8 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
     }
 
     public void startVideoLoading() {
-        //TODO startVideoLoading
+        mLoadingReview.setVisibility(View.VISIBLE);
+        mRecyclerViewReviews.setVisibility(View.INVISIBLE);
     }
 
     public void showReviewLoadingResults(List<ReviewResult> reviewResult) {
@@ -251,7 +256,10 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
     }
 
     public void showVideoLoadingResults(List<VideoResult> videoResults) {
-        //TODO showVideoLoadingResults
+        mLoadingVideos.setVisibility(View.GONE);
+        mStatusVideo.setVisibility(View.GONE);
+        mRecyclerViewVideos.setVisibility(View.VISIBLE);
+        mMovieVideosAdapter.setVideoData(videoResults);
     }
 
     public void showEmptyReviewResults(boolean isConnected) {
@@ -268,13 +276,24 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
         }
     }
 
-    public void showVideoReviewResults(boolean isConnected) {
-        //TODO showVideoReviewResults
+    public void showEmptyVideoResults(boolean isConnected) {
+        if(!isConnected) {
+            mLoadingVideos.setVisibility(View.GONE);
+            mStatusVideo.setVisibility(View.VISIBLE);
+            mStatusVideo.setText(getString(R.string.tv_no_internet));
+            mRecyclerViewVideos.setVisibility(View.GONE);
+        } else {
+            mLoadingVideos.setVisibility(View.GONE);
+            mStatusVideo.setVisibility(View.VISIBLE);
+            mStatusVideo.setText(getString(R.string.no_review));
+            mRecyclerViewVideos.setVisibility(View.GONE);
+        }
     }
 
     @Override
-    public void onClick(int movieId) {
-        //TODO onClick
+    public void onClick(String movieKey) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(NetworkUtils.BASE_YOUTUBE_URL + movieKey));
+        startActivity(intent);
     }
 
 }
