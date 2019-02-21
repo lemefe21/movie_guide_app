@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.leme.movieguideapp.adapters.MovieReviewsAdapter;
 import com.leme.movieguideapp.adapters.MovieVideosAdapter;
@@ -44,13 +43,14 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
     private static Movie movie;
 
     private ImageView mPoster;
-    private TextView mTitle;
+    private ImageView mIconFavorited;
     private TextView mOverview;
     private TextView mVoteAverage;
     private TextView mReleaseData;
     private TextView btnFavorite;
     private TextView mStatusReview;
     private TextView mStatusVideo;
+    private TextView mTitleBanner;
     private ProgressBar mLoadingReview;
     private ProgressBar mLoadingVideos;
     private RecyclerView mRecyclerViewReviews;
@@ -70,7 +70,8 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
         setContentView(R.layout.activity_movie_detail);
 
         mPoster = findViewById(R.id.iv_detail_movie_poster);
-        mTitle = findViewById(R.id.tv_detail_movie_title);
+        mIconFavorited = findViewById(R.id.iv_movie_icon_favorited);
+        mTitleBanner = findViewById(R.id.tv_movie_title_banner);
         mOverview = findViewById(R.id.tv_detail_movie_overview);
         mVoteAverage = findViewById(R.id.tv_detail_movie_vote_average);
         mReleaseData = findViewById(R.id.tv_detail_movie_release_date);
@@ -142,11 +143,11 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
 
     }
 
-    private void setFavoriteTextView() {
+    private void setFavoriteIcon() {
         if(isFavorited) {
-            btnFavorite.setText("Favorite: Yes");
+            mIconFavorited.setImageResource(R.drawable.ic_favorite);
         } else {
-            btnFavorite.setText("Favorite: No");
+            mIconFavorited.setImageResource(R.drawable.ic_no_favorite);
         }
     }
 
@@ -162,12 +163,12 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieVideo
                 .into(mPoster);
 
         typeDetail = movie.getSearchType();
-        mTitle.setText(movie.getTitle());
+        mTitleBanner.setText(movie.getTitle());
         mOverview.setText(movie.getOverview());
         mVoteAverage.setText(String.valueOf(movie.getVote_average()));
         mReleaseData.setText(movie.getRelease_date());
         isFavorited = movie.isFavorite();
-        setFavoriteTextView();
+        setFavoriteIcon();
 
     }
 

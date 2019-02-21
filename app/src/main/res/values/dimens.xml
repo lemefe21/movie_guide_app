@@ -28,5 +28,8 @@
     <dimen name="default_margim_8dp">8dp</dimen>
     <dimen name="image_thumbnail_height">110dp</dimen>
     <dimen name="image_thumbnail_width">195dp</dimen>
+    <dimen name="banner_title_size">30sp</dimen>
+    <dimen name="button_favorite_height">90dp</dimen>
+    <dimen name="default_margim_32dp">32dp</dimen>
 
 </resources>
