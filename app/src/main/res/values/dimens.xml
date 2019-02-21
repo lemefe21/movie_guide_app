@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- default dimens -->
+    <dimen name="default_margim_16dp">16dp</dimen>
+    <dimen name="default_padding_8dp">8dp</dimen>
+    <dimen name="default_padding_16dp">16dp</dimen>
+    <dimen name="default_textsize_16sp">16sp</dimen>
+    <dimen name="default_textsize_error_20sp">20sp</dimen>
+
+    <!-- error dimens -->
+    <dimen name="error_message_display_padding">@dimen/default_padding_16dp</dimen>
+    <dimen name="error_message_display_textsize">@dimen/default_textsize_error_20sp</dimen>
+
+    <!-- activity_main dimens -->
+    <dimen name="main_loading_indicator_height">42dp</dimen>
+    <dimen name="main_loading_indicator_width">@dimen/main_loading_indicator_height</dimen>
+
+    <!-- activity_movie_detail dimens -->
+    <dimen name="detail_linearlayout_padding">@dimen/default_padding_16dp</dimen>
+    <dimen name="detail_movie_poster_padding">@dimen/default_padding_8dp</dimen>
+
+    <!-- movie_list_item dimens -->
+    <dimen name="item_card_margins">@dimen/default_padding_16dp</dimen>
+    <dimen name="item_card_corner_radius">10dp</dimen>
+    <dimen name="item_card_text">@dimen/default_textsize_16sp</dimen>
+    <dimen name="item_card_padding">@dimen/default_padding_8dp</dimen>
+    <dimen name="default_margim_8dp">8dp</dimen>
+    <dimen name="image_thumbnail_height">110dp</dimen>
+    <dimen name="image_thumbnail_width">195dp</dimen>
+    <dimen name="banner_title_size">30sp</dimen>
+    <dimen name="button_favorite_height">90dp</dimen>
+    <dimen name="default_margim_32dp">32dp</dimen>
+
+</resources>

@@ -18,6 +18,10 @@ public class Movie implements Parcelable {
     private boolean adult;
     private String overview;
     private String release_date;
+    private boolean favorite;
+    private String searchType;
+
+    public Movie() {}
 
     private Movie(Parcel in) {
         vote_count = in.readInt();
@@ -137,6 +141,22 @@ public class Movie implements Parcelable {
 
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    public String getSearchType() {
+        return searchType;
+    }
+
+    public void setSearchType(String searchType) {
+        this.searchType = searchType;
     }
 
     @Override

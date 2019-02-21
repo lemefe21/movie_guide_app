@@ -8,4 +8,25 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DetailMovieSubTitles">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/default_margim_16dp</item>
+        <item name="android:layout_marginRight">@dimen/default_margim_16dp</item>
+        <item name="android:textSize">@dimen/default_textsize_16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="DetailMovieTitles" parent="@style/DetailMovieSubTitles">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/default_margim_16dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DetailMovieListReview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/default_margim_16dp</item>
+    </style>
+
 </resources>

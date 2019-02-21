@@ -12,4 +12,16 @@
     <string name="vote_release_date">release date</string>
     <string name="action_popular">Popular</string>
     <string name="action_top_rated">Top rated</string>
+    <string name="action_favorites">Favorites</string>
+    <string name="content_authority">com.leme.movieguideapp</string>
+    <string name="no_favorited_movies">You have not selected any movie as a favorite... :(</string>
+    <string name="movie_reviews">Reviews</string>
+    <string name="author">Author</string>
+    <string name="content_review">Content</string>
+    <string name="tv_no_internet">No internet connection</string>
+    <string name="no_review">No review yet...</string>
+    <string name="no_video">No trailer yet...</string>
+    <string name="reviews">review</string>
+    <string name="movie_videos">Trailers</string>
+    <string name="movie_title_banner">Movie title!</string>
 </resources>
